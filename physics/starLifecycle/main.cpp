@@ -327,9 +327,18 @@ void SpawnNebulaParticles(float cx, float cy, float radius) {
         p.vy = (cy - py) * 0.15f + ((float)rand() / RAND_MAX * 10.0f - 5.0f);
         
         int choice = rand() % 3;
-        if (choice == 0) { p.r = 0.9f; p.g = 0.2f; p.b = 0.6f; }
-        else if (choice == 1) { p.r = 0.5f; p.g = 0.1f; p.b = 0.8f; }
-        else { p.r = 0.2f; p.g = 0.7f; p.b = 0.9f; }
+        if (choice == 0) {
+            p.r = 0.9f;
+            p.g = 0.2f;
+            p.b = 0.6f;
+        } else if (choice == 1) {
+            p.r = 0.5f;
+            p.g = 0.1f;
+            p.b = 0.8f;
+        } else { p.r = 0.2f;
+            p.g = 0.7f;
+            p.b = 0.9f;
+        }
         
         p.a = 0.3f;
         p.size = 15.0f + (float)rand() / RAND_MAX * 15.0f;
@@ -356,9 +365,19 @@ void SpawnPlanetaryNebulaParticles(float cx, float cy, float innerRad) {
         p.vy = speed * sinf(angle);
         
         int choice = rand() % 3;
-        if (choice == 0) { p.r = 1.0f; p.g = 0.4f; p.b = 0.1f; }
-        else if (choice == 1) { p.r = 0.2f; p.g = 0.8f; p.b = 0.3f; }
-        else { p.r = 0.1f; p.g = 0.7f; p.b = 0.9f; }
+        if (choice == 0) {
+            p.r = 1.0f;
+            p.g = 0.4f;
+            p.b = 0.1f;
+        } else if (choice == 1) {
+            p.r = 0.2f;
+            p.g = 0.8f;
+            p.b = 0.3f;
+        } else {
+            p.r = 0.1f;
+            p.g = 0.7f;
+            p.b = 0.9f;
+        }
         
         p.a = 0.6f;
         p.size = 6.0f + (float)rand() / RAND_MAX * 10.0f;
@@ -383,9 +402,16 @@ void SpawnSupernovaParticles(float cx, float cy) {
         p.vy = speed * sinf(angle);
         
         int choice = rand() % 3;
-        if (choice == 0) { p.r = 1.0f; p.g = 1.0f; p.b = 1.0f; }
-        else if (choice == 1) { p.r = 1.0f; p.g = 0.9f; p.b = 0.2f; }
-        else { p.r = 1.0f; p.g = 0.5f; p.b = 0.1f; }
+        if (choice == 0) { p.r = 1.0f;
+            p.g = 1.0f;
+            p.b = 1.0f;
+        } else if (choice == 1) { p.r = 1.0f;
+            p.g = 0.9f;
+            p.b = 0.2f;
+        } else { p.r = 1.0f;
+            p.g = 0.5f;
+            p.b = 0.1f;
+        }
         
         p.a = 0.8f;
         p.size = 8.0f + (float)rand() / RAND_MAX * 8.0f;
@@ -411,9 +437,18 @@ void SpawnBlackHoleDiskParticles(float cx, float cy, float radius) {
         p.vy = orbSpeed * cosf(angle) - (dist * 0.05f) * sinf(angle);
         
         int choice = rand() % 3;
-        if (choice == 0) { p.r = 1.0f; p.g = 0.3f; p.b = 0.1f; }
-        else if (choice == 1) { p.r = 0.9f; p.g = 0.5f; p.b = 0.1f; }
-        else { p.r = 1.0f; p.g = 0.8f; p.b = 0.2f; }
+        if (choice == 0) {
+            p.r = 1.0f;
+            p.g = 0.3f;
+            p.b = 0.1f;
+        } else if (choice == 1) {
+            p.r = 0.9f;
+            p.g = 0.5f;
+            p.b = 0.1f;
+        } else { p.r = 1.0f;
+            p.g = 0.8f;
+            p.b = 0.2f;
+        }
         
         p.a = 0.5f;
         p.size = 2.0f + (float)rand() / RAND_MAX * 4.0f;
@@ -625,9 +660,13 @@ bool DrawButton(float x, float y, float w, float h, const char* label, bool acti
     
     float r = 0.12f, g = 0.14f, b = 0.22f;
     if (active) {
-        r = 0.16f; g = 0.40f; b = 0.90f;
+        r = 0.16f;
+        g = 0.40f;
+        b = 0.90f;
     } else if (hovered) {
-        r = 0.20f; g = 0.23f; b = 0.35f;
+        r = 0.20f;
+        g = 0.23f;
+        b = 0.35f;
     }
     
     DrawRect(x, y, w, h, r, g, b);
@@ -654,23 +693,25 @@ void DrawStellarVisualizer(float cx, float cy, StarState s) {
         SpawnNebulaParticles(cx, cy, 200.0f);
         DrawParticles();
         PrintString(cx - 50.0f, cy, "Nébula de Gás", fontBaseBold, 0.8f, 0.5f, 0.9f);
-    }
-    else if (s.stageIndex == 1) {
+    } else if (s.stageIndex == 1) {
         SpawnNebulaParticles(cx, cy, 120.0f);
         DrawParticles();
         DrawFilledCircle(cx, cy, 30.0f, 1.0f, 0.3f, 0.1f, 0.3f, 50);
         DrawFilledCircle(cx, cy, 20.0f, 1.0f, 0.5f, 0.1f, 0.6f, 50);
         DrawFilledCircle(cx, cy, 10.0f, 1.0f, 0.8f, 0.2f, 0.9f, 50);
-    }
-    else if (s.stageIndex == 2) {
+    } else if (s.stageIndex == 2) {
         float visualR = 40.0f + float(s.radius * 3.0);
         if (visualR > 120.0f) visualR = 120.0f;
         
         float rColor = 1.0f, gColor = 0.9f, bColor = 0.2f;
         if (initialMass < 0.8) {
-            rColor = 0.9f; gColor = 0.2f; bColor = 0.1f;
+            rColor = 0.9f;
+            gColor = 0.2f;
+            bColor = 0.1f;
         } else if (initialMass > 8.0) {
-            rColor = 0.2f; gColor = 0.6f; bColor = 1.0f;
+            rColor = 0.2f;
+            gColor = 0.6f;
+            bColor = 1.0f;
         }
         
         for (int i = 5; i > 0; --i) {
@@ -679,15 +720,16 @@ void DrawStellarVisualizer(float cx, float cy, StarState s) {
         }
         DrawFilledCircle(cx, cy, visualR, rColor, gColor, bColor, 1.0f, 60);
         DrawFilledCircle(cx, cy, visualR * 0.7f, 1.0f, 1.0f, 1.0f, 1.0f, 60);
-    }
-    else if (s.stageIndex == 3) {
+    } else if (s.stageIndex == 3) {
         float visualR = 100.0f + float(s.radius * 0.05);
         if (visualR > 180.0f) visualR = 180.0f;
         if (visualR < 80.0f) visualR = 80.0f;
         
         float rColor = 0.9f, gColor = 0.2f, bColor = 0.1f;
         if (initialMass > 20.0 && agePercent < 0.76) {
-            rColor = 0.2f; gColor = 0.5f; bColor = 0.9f;
+            rColor = 0.2f;
+            gColor = 0.5f;
+            bColor = 0.9f;
         }
         
         for (int i = 5; i > 0; --i) {
@@ -696,8 +738,7 @@ void DrawStellarVisualizer(float cx, float cy, StarState s) {
         }
         DrawFilledCircle(cx, cy, visualR, rColor, gColor, bColor, 1.0f, 60);
         DrawFilledCircle(cx, cy, visualR * 0.5f, 1.0f, 0.6f, 0.1f, 1.0f, 60);
-    }
-    else if (s.stageIndex == 4) {
+    } else if (s.stageIndex == 4) {
         if (initialMass < 8.0) {
             SpawnPlanetaryNebulaParticles(cx, cy, 35.0f);
             DrawParticles();
@@ -714,14 +755,12 @@ void DrawStellarVisualizer(float cx, float cy, StarState s) {
                 if (rand() % 5 == 0) flashAlpha = 0.15f;
             }
         }
-    }
-    else {
+    } else {
         if (initialMass < 8.0) {
             DrawFilledCircle(cx, cy, 35.0f, 0.3f, 0.7f, 1.0f, 0.1f, 40);
             DrawFilledCircle(cx, cy, 15.0f, 0.3f, 0.7f, 1.0f, 0.3f, 40);
             DrawFilledCircle(cx, cy, 5.0f, 1.0f, 1.0f, 1.0f, 1.0f, 40);
-        }
-        else if (initialMass <= 20.0) {
+        } else if (initialMass <= 20.0) {
             DrawFilledCircle(cx, cy, 12.0f, 0.5f, 0.8f, 1.0f, 0.4f, 30);
             DrawFilledCircle(cx, cy, 4.0f, 1.0f, 1.0f, 1.0f, 1.0f, 30);
             
@@ -745,8 +784,7 @@ void DrawStellarVisualizer(float cx, float cy, StarState s) {
             glVertex2f(cx + 250.0f * cosf(oppAngle + 0.12f), cy + 250.0f * sinf(oppAngle + 0.12f));
             glEnd();
             glDisable(GL_BLEND);
-        }
-        else {
+        } else {
             SpawnBlackHoleDiskParticles(cx, cy, 45.0f);
             DrawParticles();
             
@@ -793,16 +831,20 @@ void DrawGLScene() {
     PrintString(800, massY + 30, "Massa Estelar Inicial:", fontBaseBold, 0.8f, 0.8f, 0.9f);
     
     if (DrawButton(800, massY, 80, 30, "0.5 M☉", initialMass == 0.5, mx, my, clicked)) {
-        initialMass = 0.5; ResetSimulation();
+        initialMass = 0.5;
+        ResetSimulation();
     }
     if (DrawButton(890, massY, 80, 30, "1.0 M☉", initialMass == 1.0, mx, my, clicked)) {
-        initialMass = 1.0; ResetSimulation();
+        initialMass = 1.0;
+        ResetSimulation();
     }
     if (DrawButton(980, massY, 80, 30, "10 M☉", initialMass == 10.0, mx, my, clicked)) {
-        initialMass = 10.0; ResetSimulation();
+        initialMass = 10.0;
+        ResetSimulation();
     }
     if (DrawButton(1070, massY, 80, 30, "30 M☉", initialMass == 30.0, mx, my, clicked)) {
-        initialMass = 30.0; ResetSimulation();
+        initialMass = 30.0;
+        ResetSimulation();
     }
 
     float ctrlY = 410.0f;
@@ -838,19 +880,19 @@ void DrawGLScene() {
     sprintf(nameBuf, "Estágio:  %s", s.stageName.c_str());
     
     if (s.ageYears > 1000.0) {
-        sprintf(ageBuf, "Idade:   %.2f Bilhoes de anos", s.ageYears / 1000.0);
+        sprintf(ageBuf, "Idade: %.2f Bilhoes de anos", s.ageYears / 1000.0);
     } else {
-        sprintf(ageBuf, "Idade:   %.1f Milhoes de anos", s.ageYears);
+        sprintf(ageBuf, "Idade: %.1f Milhoes de anos", s.ageYears);
     }
     
-    if (s.temp == 0.0) sprintf(tempBuf, "Temp:    Singularidade (0K)");
-    else sprintf(tempBuf, "Temp:    %.0f K", s.temp);
+    if (s.temp == 0.0) sprintf(tempBuf, "Temp: Singularidade (0K)");
+    else sprintf(tempBuf, "Temp: %.0f K", s.temp);
     
-    if (s.radius < 0.01) sprintf(radBuf, "Raio:    %.4f R☉ (Estrela compacta)", s.radius);
-    else sprintf(radBuf, "Raio:    %.2f R☉", s.radius);
+    if (s.radius < 0.01) sprintf(radBuf, "Raio: %.4f R☉ (Estrela compacta)", s.radius);
+    else sprintf(radBuf, "Raio: %.2f R☉", s.radius);
     
     if (s.lum == 0.0) sprintf(lumBuf, "Brilho:  Totalmente Negro (0 L☉)");
-    else sprintf(lumBuf, "Brilho:  %.2f L☉", s.lum);
+    else sprintf(lumBuf, "Brilho: %.2f L☉", s.lum);
     
     PrintString(800, statsY, nameBuf, fontBaseBold, 1.0f, 0.8f, 0.2f);
     PrintString(800, statsY - 20, ageBuf, fontBaseRegular, 0.8f, 0.8f, 0.9f);
