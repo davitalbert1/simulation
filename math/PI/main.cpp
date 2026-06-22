@@ -12,10 +12,9 @@
 #include <chrono>
 #include <thread>
 
-// True value of PI
+// Valor de referência de PI com dupla precisão (IEEE 754) para cálculo de erro absoluto
 const double TRUE_PI = 3.14159265358979323846;
 
-// Fonts
 GLuint fontBaseRegular = 0;
 GLuint fontBaseBold = 0;
 GLuint fontBaseLarge = 0;
@@ -57,7 +56,6 @@ void PrintString(float x, float y, const char* str, GLuint base, float r = 1.0f,
     glPopAttrib();
 }
 
-// 2D primitives helpers
 void DrawRect(float x, float y, float w, float h, float r, float g, float b, float a = 1.0f) {
     glColor4f(r, g, b, a);
     glBegin(GL_QUADS);
@@ -91,7 +89,6 @@ void DrawCircle(float cx, float cy, float r, float red, float green, float blue,
     glEnd();
 }
 
-// Solver states and structures
 struct Point {
     float x, y;
     bool inside;
@@ -102,7 +99,6 @@ struct HistoryItem {
     double logError;
 };
 
-// Base helper to count matching digits of Pi
 int CountCorrectDigits(double val) {
     char strVal[32];
     char strTrue[32];
@@ -119,7 +115,7 @@ int CountCorrectDigits(double val) {
     return count;
 }
 
-// Gregory-Leibniz
+// Método de Gregory-Leibniz: Série infinita baseada na expansão de Taylor da função arco-tangente (arctan(1) = pi/4). Apresenta convergência linear lenta (erro proporcional a 1/N).
 struct LeibnizSolver {
     double value;
     long long k;
@@ -141,7 +137,9 @@ struct LeibnizSolver {
         history.push_back({logIter, logErr});
         
         recentValues.push_back(value);
-        if (recentValues.size() > 200) recentValues.erase(recentValues.begin());
+        if (recentValues.size() > 200) {
+            recentValues.erase(recentValues.begin());
+        }
     }
 
     void step(int count) {
@@ -154,7 +152,7 @@ struct LeibnizSolver {
     }
 };
 
-// Nilakantha
+// Série de Nilakantha: Converge mais rapidamente que a série de Leibniz (erro proporcional a 1/N^3) através de termos alternados com denominadores baseados no produto de três inteiros consecutivos.
 struct NilakanthaSolver {
     double value;
     long long k;
@@ -176,21 +174,26 @@ struct NilakanthaSolver {
         history.push_back({logIter, logErr});
         
         recentValues.push_back(value);
-        if (recentValues.size() > 200) recentValues.erase(recentValues.begin());
+        if (recentValues.size() > 200) {
+            recentValues.erase(recentValues.begin());
+        }
     }
 
     void step(int count) {
         for (int i = 0; i < count; ++i) {
             double term = 4.0 / ((2.0 * k) * (2.0 * k + 1.0) * (2.0 * k + 2.0));
-            if (k % 2 == 1) value += term;
-            else value -= term;
+            if (k % 2 == 1) {
+                value += term;
+            } else {
+                value -= term;
+            }
             k++;
         }
         recordHistory();
     }
 };
 
-// Monte Carlo
+// Método de Monte Carlo: Abordagem probabilística que estima o valor de PI gerando pontos aleatórios em um quadrado e calculando a proporção de pontos que caem dentro de um círculo inscrito. A convergência é estocástica (erro proporcional a 1/sqrt(N)).
 struct MonteCarloSolver {
     double value;
     long long totalPoints;
@@ -219,7 +222,9 @@ struct MonteCarloSolver {
             float x = (float)rand() / RAND_MAX * 2.0f - 1.0f;
             float y = (float)rand() / RAND_MAX * 2.0f - 1.0f;
             bool inside = (x*x + y*y <= 1.0f);
-            if (inside) insidePoints++;
+            if (inside) {
+                insidePoints++;
+            }
             totalPoints++;
             
             if (points.size() < 4000) {
@@ -229,12 +234,14 @@ struct MonteCarloSolver {
                 points[idx] = {x, y, inside};
             }
         }
-        if (totalPoints > 0) value = 4.0 * (double)insidePoints / totalPoints;
+        if (totalPoints > 0) {
+            value = 4.0 * (double)insidePoints / totalPoints;
+        }
         recordHistory();
     }
 };
 
-// Archimedes
+// Método do Polígono de Arquimedes: Algoritmo geométrico clássico que aproxima o valor de PI calculando os limites dos perímetros de polígonos regulares inscritos e circunscritos de N lados que cercam uma circunferência unitária.
 struct ArchimedesSolver {
     double value;
     double inscribed;
@@ -244,8 +251,8 @@ struct ArchimedesSolver {
 
     void reset() {
         sides = 6;
-        inscribed = 3.0; // Hexagon
-        circumscribed = 3.4641016151377544; // 2 * sqrt(3)
+        inscribed = 3.0;
+        circumscribed = 3.4641016151377544;
         value = (inscribed + circumscribed) / 2.0;
         history.clear();
         recordHistory();
@@ -254,7 +261,6 @@ struct ArchimedesSolver {
     void recordHistory() {
         double err = std::abs(value - TRUE_PI);
         double logErr = (err < 1e-16) ? -16.0 : std::log10(err);
-        // Let's use log10(sides) as the X axis
         double logSides = std::log10((double)sides);
         history.push_back({logSides, logErr});
     }
@@ -272,12 +278,12 @@ struct ArchimedesSolver {
     }
 };
 
-// Gauss-Legendre
 struct GaussLegendreRow {
     int step;
     double a, b, t, p, piVal;
 };
 
+// Algoritmo de Gauss-Legendre (Salamin-Brent): Método iterativo com convergência quadrática. O número de dígitos significativos corretos aproximadamente dobra a cada iteração baseando-se no cálculo da média aritmética-geométrica.
 struct GaussLegendreSolver {
     double value;
     double a, b, t, p;
@@ -301,9 +307,6 @@ struct GaussLegendreSolver {
     void recordHistory() {
         double err = std::abs(value - TRUE_PI);
         double logErr = (err < 1e-16) ? -16.0 : std::log10(err);
-        // For GL and Chudnovsky, we'll map iterations to equivalent computational steps
-        // Every iteration in GL roughly doubles correct digits (same complexity cost as log)
-        // Let's plot X = iteration
         history.push_back({(double)iteration, logErr});
     }
 
@@ -326,7 +329,6 @@ struct GaussLegendreSolver {
     }
 };
 
-// Chudnovsky
 struct ChudnovskyRow {
     int termIndex;
     double Aq;
@@ -334,6 +336,7 @@ struct ChudnovskyRow {
     double piVal;
 };
 
+// Algoritmo de Chudnovsky: Baseado nas fórmulas de Ramanujan para a inversão de funções elípticas modulares. É atualmente o método mais rápido e eficiente disponível para cálculo sequencial de dígitos de PI, adicionando aproximadamente 14 dígitos corretos por termo calculado.
 struct ChudnovskySolver {
     double value;
     double A;
@@ -377,7 +380,6 @@ struct ChudnovskySolver {
     }
 };
 
-// Application Global State
 LeibnizSolver leibniz;
 NilakanthaSolver nilakantha;
 MonteCarloSolver monteCarlo;
@@ -385,10 +387,10 @@ ArchimedesSolver archimedes;
 GaussLegendreSolver gaussLegendre;
 ChudnovskySolver chudnovsky;
 
-int activeAlgo = 5; // Start with Chudnovsky (the most efficient)
-int activeTab = 0;  // 0 = Visualizer, 1 = Error Graph
+int activeAlgo = 5;
+int activeTab = 0;
 bool isRunning = true;
-int speedLevel = 3; // 1 to 5
+int speedLevel = 3;
 
 void ResetAll() {
     leibniz.reset();
@@ -402,7 +404,6 @@ void ResetAll() {
 void UpdateSimulation() {
     if (!isRunning) return;
 
-    // Determine steps per frame based on speed level
     int steps = 1;
     if (speedLevel == 2) steps = 10;
     else if (speedLevel == 3) steps = 100;
@@ -413,8 +414,6 @@ void UpdateSimulation() {
     nilakantha.step(steps);
     monteCarlo.step(steps);
     
-    // Slow down updates for Archimedes, Gauss-Legendre and Chudnovsky 
-    // to make them visible and stable (e.g. step them slowly if we are running)
     static int frameCounter = 0;
     frameCounter++;
     if (frameCounter % 15 == 0) {
@@ -424,121 +423,106 @@ void UpdateSimulation() {
     }
 }
 
-// GUI Drawing Utilities
 bool DrawButton(float x, float y, float w, float h, const char* label, bool active, int mx, int my, bool clicked) {
     bool hovered = (mx >= x && mx <= x + w && my >= y && my <= y + h);
-
-    // Color scheme
-    float r = 0.12f, g = 0.14f, b = 0.22f; // normal
+    
+    float r = 0.12f, g = 0.14f, b = 0.22f;
     if (active) {
-        r = 0.16f; g = 0.40f; b = 0.90f;   // active blue
+        r = 0.16f; g = 0.40f; b = 0.90f;
     } else if (hovered) {
-        r = 0.20f; g = 0.23f; b = 0.35f;   // hovered
+        r = 0.20f; g = 0.23f; b = 0.35f;
     }
-
+    
     DrawRect(x, y, w, h, r, g, b);
     DrawRectOutline(x, y, w, h, 0.3f, 0.4f, 0.6f);
     
-    // Center label text
     int labelLen = strlen(label);
-    // Simple estimation of text size: ~7px wide per character for normal font
     float textW = labelLen * 7.0f;
     float tx = x + (w - textW) / 2.0f;
     float ty = y + (h - 10.0f) / 2.0f;
-
+    
     PrintString(tx, ty, label, fontBaseBold, 1.0f, 1.0f, 1.0f);
-
+    
     return hovered && clicked;
 }
 
-// Function to draw digits of computed Pi next to true Pi, color-coded
 void DrawDigitsComparison(float x, float y, double computedVal) {
     char strVal[32];
     char strTrue[32];
     sprintf(strVal, "%.15f", computedVal);
     sprintf(strTrue, "%.15f", TRUE_PI);
-
-    // Print Headers
+    
     PrintString(x, y + 40, "Dígitos (Verde = Correto, Vermelho = Incorreto):", fontBaseBold, 0.7f, 0.7f, 0.8f);
-
-    // Print True Pi label
     PrintString(x, y + 20, "Alvo:  3 . 1 4 1 5 9 2 6 5 3 5 8 9 7 9", fontBaseBold, 0.2f, 0.8f, 0.2f);
-
-    // Print Calc Pi label
     PrintString(x, y, "Calc: ", fontBaseBold, 0.7f, 0.7f, 0.8f);
     
     float cx = x + 40.0f;
-    // Format computed string into spaced characters and render
     bool correct = true;
     for (int i = 0; i < 17; ++i) {
         char ch = strVal[i];
         char displayStr[2] = { ch, '\0' };
         
         if (i < (int)strlen(strTrue)) {
-            if (strVal[i] != strTrue[i]) correct = false;
+            if (strVal[i] != strTrue[i]) {
+                correct = false;
+            }
         } else {
             correct = false;
         }
-
-        float r = 0.9f, g = 0.2f, b = 0.2f; // Red if wrong
-        if (correct) r = 0.2f; g = 0.8f; b = 0.2f; // Green if correct
-        if (ch == '.') r = 0.7f; g = 0.7f; b = 0.8f; // Gray dot
+        
+        float r = 0.9f, g = 0.2f, b = 0.2f;
+        if (correct) {
+            r = 0.2f; g = 0.8f; b = 0.2f;
+        }
+        if (ch == '.') {
+            r = 0.7f; g = 0.7f; b = 0.8f;
+        }
         
         PrintString(cx, y, displayStr, fontBaseBold, r, g, b);
         cx += 12.0f;
     }
 }
 
-// Draw the Convergence Log-Error Graph
 void DrawErrorGraph() {
     float x = 40.0f;
     float y = 80.0f;
     float w = 680.0f;
     float h = 600.0f;
-
-    // Background of graph
+    
     DrawRect(x, y, w, h, 0.08f, 0.09f, 0.13f);
     DrawRectOutline(x, y, w, h, 0.2f, 0.25f, 0.35f, 2.0f);
-
-    // Grid Lines for Y-axis (Log Error: from 0 down to -16)
+    
     for (int i = 0; i >= -16; i -= 2) {
         float gy = y + h - ((double)i / -16.0) * h;
-        // Horizontal grid line
         glColor4f(0.15f, 0.18f, 0.28f, 0.5f);
         glLineWidth(1.0f);
         glBegin(GL_LINES);
         glVertex2f(x, gy);
         glVertex2f(x + w, gy);
         glEnd();
-
-        // Label
+        
         char lbl[16];
         sprintf(lbl, "10^%d", i);
         PrintString(x - 45.0f, gy - 4.0f, lbl, fontBaseRegular, 0.6f, 0.6f, 0.7f);
     }
-
-    // Grid Lines for X-axis (Log Iterations / Steps from 0 to 6)
-    // 10^0 = 1, 10^6 = 1,000,000
+    
     for (int i = 0; i <= 6; ++i) {
         float gx = x + ((double)i / 6.0) * w;
-        // Vertical grid line
         glColor4f(0.15f, 0.18f, 0.28f, 0.5f);
         glBegin(GL_LINES);
         glVertex2f(gx, y);
         glVertex2f(gx, y + h);
         glEnd();
         
-        // Label
         char lbl[16];
         if (i == 0) strcpy(lbl, "1");
         else sprintf(lbl, "10^%d", i);
         PrintString(gx - 15.0f, y - 18.0f, lbl, fontBaseRegular, 0.6f, 0.6f, 0.7f);
     }
-
+    
     PrintString(x + w/2 - 60.0f, y - 35.0f, "Numero de Iteracoes (Log)", fontBaseBold, 0.7f, 0.7f, 0.8f);
     PrintString(x - 30.0f, y + h + 15.0f, "Erro Absoluto (Log10)", fontBaseBold, 0.7f, 0.7f, 0.8f);
 
-    // Draw curves
     auto drawCurve = [&](const std::vector<HistoryItem>& hist, float r, float g, float b, const char* name, int legendIndex) {
         if (hist.empty()) return;
         
@@ -546,23 +530,20 @@ void DrawErrorGraph() {
         glLineWidth(2.5f);
         glBegin(GL_LINE_STRIP);
         for (const auto& pt : hist) {
-            // X goes from 0 to 6
-            // Y goes from 0 to -16 (so pt.logError / -16.0)
             double px = pt.iterations;
-            if (px > 6.0) px = 6.0; // clamp
+            if (px > 6.0) px = 6.0;
             if (px < 0.0) px = 0.0;
-
+            
             double pyVal = pt.logError;
             if (pyVal > 0.0) pyVal = 0.0;
             if (pyVal < -16.0) pyVal = -16.0;
-
+            
             float screenX = x + (px / 6.0) * w;
             float screenY = y + h - (pyVal / -16.0) * h;
             glVertex2f(screenX, screenY);
         }
         glEnd();
-
-        // Draw legend
+        
         float lx = x + 30.0f + (legendIndex % 3) * 200.0f;
         float ly = y + h - 25.0f - (legendIndex / 3) * 20.0f;
         DrawRect(lx, ly + 2.0f, 15.0f, 8.0f, r, g, b);
@@ -573,60 +554,48 @@ void DrawErrorGraph() {
     drawCurve(nilakantha.history, 0.8f, 0.3f, 0.9f, "Nilakantha", 1);
     drawCurve(monteCarlo.history, 0.2f, 0.7f, 0.9f, "Monte Carlo", 2);
     drawCurve(archimedes.history, 0.9f, 0.5f, 0.1f, "Arquimedes", 3);
-    // Scale X coordinate of Gauss-Legendre and Chudnovsky to align on iterations
-    // Since GL and Chudnovsky are mapped directly by step number, we map them as X = steps
-    // To show their extreme speed, let's plot their curves
-    // Their steps are: 0, 1, 2, 3...
-    // We map step index directly to x coordinates: step 1 corresponds to log10(1) = 0, step 10 = log10(10)=1
-    // Actually, to make them directly comparable on complexity, let's plot them using step index directly.
     drawCurve(gaussLegendre.history, 0.1f, 0.9f, 0.4f, "Gauss-Legendre", 4);
     drawCurve(chudnovsky.history, 1.0f, 0.2f, 0.2f, "Chudnovsky (Mais Eficiente)", 5);
 }
 
-// Main Draw function
 void DrawGLScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Get mouse state
+    
     POINT mousePos;
     GetCursorPos(&mousePos);
     ScreenToClient(g_hwnd, &mousePos);
     int mx = mousePos.x;
-    int my = 800 - mousePos.y; // Invert to match OpenGL coords
+    int my = 800 - mousePos.y;
     static bool lastMouseState = false;
     bool currentMouseState = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
     bool clicked = currentMouseState && !lastMouseState;
     lastMouseState = currentMouseState;
-
-    // Set up 2D viewport
+    
     glViewport(0, 0, 1200, 800);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, 1200, 0, 800, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-    // Draw Background
+    
     DrawRect(0, 0, 1200, 800, 0.05f, 0.05f, 0.08f);
-
-    // Panels
-    DrawRect(15, 15, 750, 770, 0.09f, 0.10f, 0.15f); // Left Panel
+    
+    DrawRect(15, 15, 750, 770, 0.09f, 0.10f, 0.15f);
     DrawRectOutline(15, 15, 750, 770, 0.18f, 0.22f, 0.35f, 2.0f);
-
-    DrawRect(780, 15, 405, 770, 0.09f, 0.10f, 0.15f); // Right Panel
+    
+    DrawRect(780, 15, 405, 770, 0.09f, 0.10f, 0.15f);
     DrawRectOutline(780, 15, 405, 770, 0.18f, 0.22f, 0.35f, 2.0f);
 
-    // Title
     PrintString(800, 750, "SIMULAÇÃO DE PI", fontBaseLarge, 1.0f, 1.0f, 1.0f);
     PrintString(800, 730, "Calculo de PI por multiplos modelos", fontBaseRegular, 0.6f, 0.6f, 0.7f);
 
-    // Sidebar: Tabs at Left Panel Header
-    if (DrawButton(30, 740, 180, 32, "Visualizador", activeTab == 0, mx, my, clicked)) activeTab = 0;
+    if (DrawButton(30, 740, 180, 32, "Visualizador", activeTab == 0, mx, my, clicked)) {
+        activeTab = 0;
+    }
     if (DrawButton(220, 740, 180, 32, "Grafico de Erro (Log)", activeTab == 1, mx, my, clicked)) {
         activeTab = 1;
     }
 
-    // Sidebar: Algorithm Buttons
     float btnY = 510.0f;
     const char* algoNames[] = {
         "1. Gregory-Leibniz",
@@ -644,7 +613,6 @@ void DrawGLScene() {
         }
     }
     
-    // Sidebar: Controls
     float ctrlY = 240.0f;
     PrintString(800, ctrlY + 30, "Controles de Simulacao:", fontBaseBold, 0.8f, 0.8f, 0.9f);
     
@@ -652,7 +620,6 @@ void DrawGLScene() {
         isRunning = !isRunning;
     }
     
-    // Step Button (Manual Step)
     if (DrawButton(920, ctrlY, 110, 30, "Passo a Passo", false, mx, my, clicked)) {
         isRunning = false;
         leibniz.step(1);
@@ -663,9 +630,10 @@ void DrawGLScene() {
         chudnovsky.step();
     }
     
-    if (DrawButton(1040, ctrlY, 125, 30, "Reiniciar Tudo", false, mx, my, clicked)) ResetAll();
+    if (DrawButton(1040, ctrlY, 125, 30, "Reiniciar Tudo", false, mx, my, clicked)) {
+        ResetAll();
+    }
 
-    // Speed Selector (Only affects Leibniz, Nilakantha, Monte Carlo)
     float speedY = 180.0f;
     PrintString(800, speedY + 20, "Velocidade de Iteracao (Leibniz/MC):", fontBaseBold, 0.8f, 0.8f, 0.9f);
     char speedText[32];
@@ -681,43 +649,32 @@ void DrawGLScene() {
         }
     }
 
-    // Get Active Solver details
     double currentVal = 0.0;
     long long currentSteps = 0;
     int correctDigits = 0;
     
-    if (activeAlgo == 0) {
-        currentVal = leibniz.value;
-        currentSteps = leibniz.k;
-    } else if (activeAlgo == 1) {
-        currentVal = nilakantha.value;
-        currentSteps = nilakantha.k;
-    } else if (activeAlgo == 2) {
-        currentVal = monteCarlo.value;
-        currentSteps = monteCarlo.totalPoints;
-    } else if (activeAlgo == 3) {
-        currentVal = archimedes.value;
-        currentSteps = archimedes.sides;
-    } else if (activeAlgo == 4) {
-        currentVal = gaussLegendre.value;
-        currentSteps = gaussLegendre.iteration;
-    } else if (activeAlgo == 5) {
-        currentVal = chudnovsky.value; 
-        currentSteps = chudnovsky.q;
-    }
+    if (activeAlgo == 0) { currentVal = leibniz.value; currentSteps = leibniz.k; }
+    else if (activeAlgo == 1) { currentVal = nilakantha.value; currentSteps = nilakantha.k; }
+    else if (activeAlgo == 2) { currentVal = monteCarlo.value; currentSteps = monteCarlo.totalPoints; }
+    else if (activeAlgo == 3) { currentVal = archimedes.value; currentSteps = archimedes.sides; }
+    else if (activeAlgo == 4) { currentVal = gaussLegendre.value; currentSteps = gaussLegendre.iteration; }
+    else if (activeAlgo == 5) { currentVal = chudnovsky.value; currentSteps = chudnovsky.q; }
     
     correctDigits = CountCorrectDigits(currentVal);
     
-    // Display calculations in Right Panel
     float readY = 90.0f;
     DrawDigitsComparison(800, readY, currentVal);
 
     char valBuf[64], stepBuf[64], errBuf[64];
     sprintf(valBuf, "Valor Estimado:  %.15f", currentVal);
     
-    if (activeAlgo == 3) sprintf(stepBuf, "Lados do Poligono: %lld", currentSteps);
-    else if (activeAlgo == 4 || activeAlgo == 5) sprintf(stepBuf, "Iteracoes / Termos: %lld", currentSteps);
-    else sprintf(stepBuf, "Iteracoes: %lld", currentSteps);
+    if (activeAlgo == 3) {
+        sprintf(stepBuf, "Lados do Poligono: %lld", currentSteps);
+    } else if (activeAlgo == 4 || activeAlgo == 5) {
+        sprintf(stepBuf, "Iteracoes / Termos: %lld", currentSteps);
+    } else {
+        sprintf(stepBuf, "Iteracoes: %lld", currentSteps);
+    }
     
     double absErr = std::abs(currentVal - TRUE_PI);
     sprintf(errBuf, "Erro Absoluto: %e", absErr);
@@ -726,14 +683,10 @@ void DrawGLScene() {
     PrintString(800, readY - 50, stepBuf, fontBaseRegular, 0.7f, 0.7f, 0.8f);
     PrintString(800, readY - 70, errBuf, fontBaseRegular, 0.9f, 0.5f, 0.5f);
 
-    // Left Panel Rendering depending on activeTab
     if (activeTab == 1) {
         DrawErrorGraph();
     } else {
-        // Visualizer mode
         if (activeAlgo == 2) {
-            // Monte Carlo Visualizer
-            // Square bounds: x=140 to 640 (width 500, height 500), y=140 to 640
             float sqX = 140.0f;
             float sqY = 140.0f;
             float sqW = 500.0f;
@@ -745,26 +698,22 @@ void DrawGLScene() {
             DrawRect(sqX, sqY, sqW, sqH, 0.08f, 0.09f, 0.13f);
             DrawRectOutline(sqX, sqY, sqW, sqH, 0.3f, 0.35f, 0.45f, 2.0f);
             
-            // Draw Circle Outline
             DrawCircle(cx, cy, r, 0.16f, 0.40f, 0.90f, 100);
             
-            // Draw points
             glPointSize(1.5f);
             glBegin(GL_POINTS);
             for (const auto& pt : monteCarlo.points) {
-                // pt.x, pt.y are in range [-1, 1]
                 float px = cx + pt.x * r;
                 float py = cy + pt.y * r;
                 if (pt.inside) {
-                    glColor3f(0.2f, 0.8f, 0.3f); // Inside green
+                    glColor3f(0.2f, 0.8f, 0.3f);
                 } else {
-                    glColor3f(0.8f, 0.2f, 0.2f); // Outside red
+                    glColor3f(0.8f, 0.2f, 0.2f);
                 }
                 glVertex2f(px, py);
             }
             glEnd();
             
-            // Render MC Info inside
             char mcInfo1[64], mcInfo2[64];
             sprintf(mcInfo1, "Pontos no Circulo (Verde): %lld", monteCarlo.insidePoints);
             sprintf(mcInfo2, "Total de Pontos: %lld", monteCarlo.totalPoints);
@@ -775,21 +724,16 @@ void DrawGLScene() {
             PrintString(sqX + 15.0f, sqY + 15.0f, "Formula: PI ~ 4 * (Pontos no Circulo / Total)", fontBaseBold, 0.8f, 0.8f, 0.9f);
             
         } else if (activeAlgo == 3) {
-            // Archimedes Visualizer
             float cx = 390.0f;
             float cy = 390.0f;
             float r = 220.0f;
             
-            // Draw Circle
             DrawCircle(cx, cy, r, 0.4f, 0.4f, 0.5f, 120);
             
-            // Draw Inscribed Polygon
             long long s = archimedes.sides;
-            // Limit drawing density for high side counts to avoid visual mess
             int drawSides = (s > 1024) ? 1024 : (int)s;
             
-            // Inscribed
-            glColor3f(0.2f, 0.7f, 0.9f); // Cyan
+            glColor3f(0.2f, 0.7f, 0.9f);
             glLineWidth(1.5f);
             glBegin(GL_LINE_LOOP);
             for (int i = 0; i < drawSides; ++i) {
@@ -800,11 +744,9 @@ void DrawGLScene() {
             }
             glEnd();
             
-            // Circumscribed
-            glColor3f(0.9f, 0.4f, 0.2f); // Orange
+            glColor3f(0.9f, 0.4f, 0.2f);
             glLineWidth(1.5f);
             glBegin(GL_LINE_LOOP);
-            // Outer radius = r / cos(pi / sides)
             float rOuter = r / cosf(3.14159265f / float(s));
             for (int i = 0; i < drawSides; ++i) {
                 float theta = 2.0f * 3.14159265f * float(i) / float(drawSides);
@@ -814,7 +756,6 @@ void DrawGLScene() {
             }
             glEnd();
             
-            // Text boxes
             PrintString(50.0f, 690.0f, "Metodo de Arquimedes (Poligonos Inscritos e Circunscritos)", fontBaseBold, 1.0f, 1.0f, 1.0f);
             
             char archText1[64], archText2[64];
@@ -829,7 +770,6 @@ void DrawGLScene() {
             PrintString(50.0f, 670.0f, sideStr, fontBaseRegular, 0.7f, 0.7f, 0.8f);
             
         } else if (activeAlgo == 0 || activeAlgo == 1) {
-            // Leibniz & Nilakantha Waveform Visualizer
             float gx = 50.0f;
             float gy = 160.0f;
             float gw = 680.0f;
@@ -838,8 +778,7 @@ void DrawGLScene() {
             DrawRect(gx, gy, gw, gh, 0.08f, 0.09f, 0.13f);
             DrawRectOutline(gx, gy, gw, gh, 0.2f, 0.25f, 0.35f, 2.0f);
             
-            // Draw Target green line
-            float pyTarget = gy + gh / 2.0f; // Target Pi line
+            float pyTarget = gy + gh / 2.0f;
             glColor3f(0.2f, 0.8f, 0.3f);
             glLineWidth(1.5f);
             glBegin(GL_LINES);
@@ -848,26 +787,22 @@ void DrawGLScene() {
             glEnd();
             PrintString(gx + 10.0f, pyTarget + 5.0f, "PI Real (3.14159...)", fontBaseBold, 0.2f, 0.8f, 0.3f);
             
-            // Draw waveform of estimates
             const std::vector<double>& vals = (activeAlgo == 0) ? leibniz.recentValues : nilakantha.recentValues;
             
             if (vals.size() > 1) {
-                // Find scale range
                 double minVal = 99.0, maxVal = -99.0;
                 for (double v : vals) {
                     if (v < minVal) minVal = v;
                     if (v > maxVal) maxVal = v;
                 }
                 
-                // Add margins to scale
                 double range = maxVal - minVal;
-                if (range < 0.0001) range = 0.0001; // prevent division by zero
+                if (range < 0.0001) range = 0.0001;
                 double scaleMin = minVal - range * 0.1;
                 double scaleMax = maxVal + range * 0.1;
                 
-                // Draw wave
-                if (activeAlgo == 0) glColor3f(0.9f, 0.8f, 0.2f); // Leibniz yellow
-                else glColor3f(0.8f, 0.3f, 0.9f); // Nilakantha purple
+                if (activeAlgo == 0) glColor3f(0.9f, 0.8f, 0.2f);
+                else glColor3f(0.8f, 0.3f, 0.9f);
                 
                 glLineWidth(2.0f);
                 glBegin(GL_LINE_STRIP);
@@ -878,7 +813,6 @@ void DrawGLScene() {
                 }
                 glEnd();
                 
-                // Label scale
                 char minLbl[32], maxLbl[32];
                 sprintf(minLbl, "Min: %.6f", scaleMin);
                 sprintf(maxLbl, "Max: %.6f", scaleMax);
@@ -897,16 +831,13 @@ void DrawGLScene() {
             }
             
         } else if (activeAlgo == 4) {
-            // Gauss-Legendre step table
             PrintString(50.0f, 690.0f, "Algoritmo Gauss-Legendre (Convergencia Quadratica)", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(50.0f, 670.0f, "O numero de digitos corretos dobra a cada passo!", fontBaseRegular, 0.7f, 0.7f, 0.8f);
             
-            // Draw Table
             float tx = 40.0f;
             float ty = 600.0f;
             float tw = 700.0f;
             
-            // Header
             DrawRect(tx, ty, tw, 28.0f, 0.15f, 0.20f, 0.35f);
             PrintString(tx + 10.0f, ty + 8.0f, "Passo", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 60.0f, ty + 8.0f, "a_n", fontBaseBold, 1.0f, 1.0f, 1.0f);
@@ -915,10 +846,8 @@ void DrawGLScene() {
             PrintString(tx + 420.0f, ty + 8.0f, "p_n", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 510.0f, ty + 8.0f, "Estimativa de PI", fontBaseBold, 1.0f, 1.0f, 1.0f);
             
-            // Rows
             for (size_t i = 0; i < gaussLegendre.rows.size() && i < 15; ++i) {
                 float ry = ty - 30.0f - i * 30.0f;
-                // Alternate row color
                 if (i % 2 == 0) {
                     DrawRect(tx, ry - 4.0f, tw, 28.0f, 0.12f, 0.13f, 0.18f);
                 } else {
@@ -940,15 +869,13 @@ void DrawGLScene() {
                 PrintString(tx + 300.0f, ry + 4.0f, tStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
                 PrintString(tx + 420.0f, ry + 4.0f, pStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
                 
-                // Color code the PI digits in table
                 int match = CountCorrectDigits(r.piVal);
                 float pr = 0.9f, pg = 0.2f, pb = 0.2f;
-                if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; } // Full green
-                else if (match > 0) { pr = 0.9f; pg = 0.7f; pb = 0.1f; } // Orange-ish
+                if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; }
+                else if (match > 0) { pr = 0.9f; pg = 0.7f; pb = 0.1f; }
                 PrintString(tx + 510.0f, ry + 4.0f, piStr, fontBaseBold, pr, pg, pb);
             }
             
-            // Formula display at bottom
             float fy = 110.0f;
             PrintString(50.0f, fy, "Atualizacao Gauss-Legendre:", fontBaseBold, 0.8f, 0.8f, 0.9f);
             PrintString(50.0f, fy - 20.0f, "  a_{n+1} = (a_n + b_n) / 2", fontBaseRegular, 0.7f, 0.7f, 0.8f);
@@ -958,26 +885,21 @@ void DrawGLScene() {
             PrintString(50.0f, fy - 70.0f, "Estimativa: PI_n = (a_n + b_n)^2 / (4 * t_n)", fontBaseBold, 0.8f, 0.8f, 0.9f);
             
         } else if (activeAlgo == 5) {
-            // Chudnovsky step table
             PrintString(50.0f, 690.0f, "Algoritmo de Chudnovsky (Mais Eficiente Disponivel)", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(50.0f, 670.0f, "Cada termo adiciona 14 digitos corretos de PI!", fontBaseRegular, 0.7f, 0.7f, 0.8f);
             
-            // Draw Table
             float tx = 40.0f;
             float ty = 600.0f;
             float tw = 700.0f;
             
-            // Header
             DrawRect(tx, ty, tw, 28.0f, 0.35f, 0.15f, 0.15f);
             PrintString(tx + 10.0f, ty + 8.0f, "Termo (q)", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 90.0f, ty + 8.0f, "Multiplicador A_q", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 290.0f, ty + 8.0f, "Valor do Termo T_q", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 510.0f, ty + 8.0f, "Estimativa de PI", fontBaseBold, 1.0f, 1.0f, 1.0f);
             
-            // Rows
             for (size_t i = 0; i < chudnovsky.rows.size() && i < 15; ++i) {
                 float ry = ty - 30.0f - i * 30.0f;
-                // Alternate row color
                 if (i % 2 == 0) {
                     DrawRect(tx, ry - 4.0f, tw, 28.0f, 0.12f, 0.13f, 0.18f);
                 } else {
@@ -997,12 +919,11 @@ void DrawGLScene() {
                 
                 int match = CountCorrectDigits(r.piVal);
                 float pr = 0.9f, pg = 0.2f, pb = 0.2f;
-                if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; } // Full green
+                if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; }
                 else if (match > 0) { pr = 0.9f; pg = 0.7f; pb = 0.1f; }
                 PrintString(tx + 510.0f, ry + 4.0f, piStr, fontBaseBold, pr, pg, pb);
             }
             
-            // Formula display at bottom
             float fy = 110.0f;
             PrintString(50.0f, fy, "Formula de Chudnovsky:", fontBaseBold, 0.8f, 0.8f, 0.9f);
             PrintString(50.0f, fy - 20.0f, "  1/PI = 12 * Sum_{q=0}^{inf} T_q", fontBaseRegular, 0.7f, 0.7f, 0.8f);
@@ -1025,14 +946,12 @@ int main() {
     BuildFonts();
     ResetAll();
 
-    // Loop
     while (true) {
         ProcessMessages();
         
         UpdateSimulation();
         DrawGLScene();
         
-        // Cap frame rate at 60 FPS
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 

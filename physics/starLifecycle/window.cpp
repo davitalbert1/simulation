@@ -38,7 +38,6 @@ bool CreateGLWindow(const char* title, int width, int height) {
 
     if (!g_hwnd) return false;
 
-    // Adjust window size so client area is exactly width x height
     RECT rect = {0, 0, width, height};
     AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX, FALSE);
     SetWindowPos(g_hwnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_NOZORDER);
