@@ -1,6 +1,5 @@
 Ciência da Computação
 Algoritmos
-Ordenação visual
 Busca em grafos
 Algoritmos genéticos
 Inteligência Artificial
@@ -26,11 +25,9 @@ Universo procedural com milhares de estrelas e planetas
 Astronomia
 Formação de sistemas planetários
 Colisões galácticas
-Buracos negros
 Lentes gravitacionais
 Expansão do universo
 Simulação de exoplanetas
-Ciclo de vida das estrelas
 
 Biologia
 Ecologia

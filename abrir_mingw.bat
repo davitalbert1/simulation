@@ -11,7 +11,7 @@ echo.
 echo Procurando bash.exe em todos os discos...
 echo.
 
-:: 1. PRIMEIRO: PATH (melhor opcao)
+:: 1. PRIMEIRO: PATH
 for %%I in (bash.exe) do (
     if not "%%~$PATH:I"=="" (
         set "CANDIDATE=%%~$PATH:I"

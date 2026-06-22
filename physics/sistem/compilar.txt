@@ -1,5 +1,0 @@
-compilar:
-./build.bat
-
-compilar:
-./solar.exe

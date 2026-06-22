@@ -39,9 +39,7 @@ static const TerrainBand rockyBands[] = {
 // método de Newton–Raphson: 𝐸𝑛+1 = (𝐸𝑛−𝐸𝑛−𝑒sin⁡(𝐸𝑛)−𝑀)/(1−𝑒cos⁡(𝐸𝑛))
 float SolveKepler(float M, float e) {
     float E = M;
-    for (int i = 0; i < 5; i++) {
-        E = E - (E - e * sinf(E) - M) / (1.0f - e * cosf(E));
-    }
+    for (int i = 0; i < 5; i++) E = E - (E - e * sinf(E) - M) / (1.0f - e * cosf(E));
     return E;
 }
 
@@ -58,7 +56,6 @@ float BinaryStability(float distance, float starSeparation) {
 float ComputeFlux(const Sun& sun, float distance) {
     float luminosity = powf(sun.temperature / CFG.starBaseTemp, 4.0f);
     distance = fmaxf(distance, sun.radius);
-
     return (luminosity * CFG.fluxFalloff * 35.0f) / (distance * distance);
 }
 
@@ -297,15 +294,10 @@ GLuint GenerateSunTexture(int size) {
             intensity += plasma * 0.25f;
 
             // quantização
-            if (intensity < 0.25f) {
-                intensity = 0.2f;
-            } else if (intensity < 0.5f) {
-                intensity = 0.45f;
-            } else if (intensity < 0.75f) {
-                intensity = 0.75f;
-            } else {
-                intensity = 1.0f;
-            }
+            if (intensity < 0.25f) intensity = 0.2f;
+            else if (intensity < 0.5f) intensity = 0.45f;
+            else if (intensity < 0.75f) intensity = 0.75f;
+            else intensity = 1.0f;
 
             // borda estilo cel shading
             float edge = 1.0f - SmoothStep(0.35f, 0.5f, d);
@@ -578,13 +570,9 @@ void InitSuns() {
 
     float roll = (rand() % 1000) / 1000.0f;
 
-    if (roll < 0.70f) {
-        systemType = SINGLE;
-    } else if (roll < 0.95f) {
-        systemType = BINARY;
-    }  else {
-        systemType = TRIPLE;
-    }
+    if (roll < 0.70f) systemType = SINGLE;
+    else if (roll < 0.95f) systemType = BINARY;
+    else systemType = TRIPLE;
 
     // estrela primária
     Sun s1 = {};
@@ -723,13 +711,8 @@ void InitPlanets(int planetCount) {
 
     // Frequencia inspirada no Sistema Solar: muitos planetas, um cinturao principal
     // perto da transicao rochoso/gasoso e, mais raramente, um cinturao externo.
-    if (planetCount >= 5 && rand() % 100 < 85) {
-        mainBeltSlot = 4;
-    }
-
-    if (planetCount >= 8 && rand() % 100 < 35) {
-        outerBeltSlot = planetCount - 1;
-    }
+    if (planetCount >= 5 && rand() % 100 < 85) mainBeltSlot = 4;
+    if (planetCount >= 8 && rand() % 100 < 35) outerBeltSlot = planetCount - 1;
 
     for (int i = 0; i < planetCount; i++) {
         if (i == mainBeltSlot || i == outerBeltSlot) {
@@ -775,40 +758,10 @@ void InitPlanets(int planetCount) {
 
         float rollGas = (rand() % 1000) / 1000.0f;
 
-        if (rollGas < gasChance && currentDistance > 4.0f) {
-            p.type = GAS;
-        } else if (p.temperature < CFG.iceThreshold) {
-            p.type = ICE;
-        } else if (p.temperature > CFG.lavaThreshold) {
-            p.type = LAVA;
-        } else {
-            p.type = ROCKY;
-        }
-
-        /*
-
-        float stability = BinaryStability(currentDistance, CFG.binaryInstabilityScale); // separação das estrelas
-
-        if (stability < 0.2f) {
-            p.type = ASTEROID_FIELD;
-        } else {
-            float gasChance = 0.15f + (currentDistance * 0.02f);
-            if (gasChance > 0.65f) gasChance = 0.65f;
-
-            float rollGas = (rand() % 1000) / 1000.0f;
-
-            if (rollGas < gasChance && currentDistance > 4.0f) {
-                p.type = GAS;
-            } else if (p.temperature < CFG.iceThreshold) {
-                p.type = ICE;
-            } else if (p.temperature > CFG.lavaThreshold) {
-                p.type = LAVA;
-            } else {
-                p.type = ROCKY;
-            }
-        }
-
-        */
+        if (rollGas < gasChance && currentDistance > 4.0f) p.type = GAS;
+        else if (p.temperature < CFG.iceThreshold) p.type = ICE;
+        else if (p.temperature > CFG.lavaThreshold) p.type = LAVA;
+        else p.type = ROCKY;
 
         if (p.type == ROCKY) {
             bool goldilocks = p.temperature > CFG.habitableMinTemp && p.temperature < CFG.habitableMaxTemp;
@@ -816,34 +769,21 @@ void InitPlanets(int planetCount) {
 
             float roll = (rand() % 1000) / 1000.0f;
 
-            if (goldilocks && waterPotential && roll < 0.08f) {
-                p.surfaceClass = HABITABLE;
-            } else if (p.temperature >= 305.0f) {
-                p.surfaceClass = ARID_HOT;
-            } else if (p.temperature <= 185.0f) {
-                p.surfaceClass = ARID_FROZEN;
-            } else {
-                p.surfaceClass = ARID_DRY;
-            }
+            if (goldilocks && waterPotential && roll < 0.08f) p.surfaceClass = HABITABLE;
+            else if (p.temperature >= 305.0f) p.surfaceClass = ARID_HOT;
+            else if (p.temperature <= 185.0f) p.surfaceClass = ARID_FROZEN;
+            else p.surfaceClass = ARID_DRY;
         } else {
             p.surfaceClass = NONE;
         }
 
-        if(p.type == GAS){
-            p.size *= 2.5f + rand() % 200 / 100.0f;
-        } else {
-            p.size = 0.2f + (rand() % 50) / 100.0f;
-        }
+        if(p.type == GAS) p.size *= 2.5f + rand() % 200 / 100.0f;
+        else p.size = 0.2f + (rand() % 50) / 100.0f;
 
-        if (p.surfaceClass == HABITABLE) {
-            p.oceanLevel = 0.25f + ((rand() % 15) / 100.0f);
-        } else {
-            p.oceanLevel = 0.35f + ((rand() % 20) / 100.0f);
-        }
+        if (p.surfaceClass == HABITABLE) p.oceanLevel = 0.25f + ((rand() % 15) / 100.0f);
+        else p.oceanLevel = 0.35f + ((rand() % 20) / 100.0f);
 
-        if (p.type == ASTEROID_FIELD) {
-            GenerateAsteroidField(p);
-        }
+        if (p.type == ASTEROID_FIELD) GenerateAsteroidField(p);
 
         switch (p.surfaceClass) {
             case HABITABLE:
@@ -899,7 +839,6 @@ void InitPlanets(int planetCount) {
                 break;
             case ASTEROID_FIELD:
                 p.texture = texRocky;
-
                 p.r = 0.35f;
                 p.g = 0.35f;
                 p.b = 0.35f;
@@ -1053,9 +992,7 @@ void DrawSolarSystem(float time) {
     }
 
     // LUZES
-    for (size_t i = 0; i < suns.size(); i++) {
-        SetupLight((int)i, suns[i]);
-    }
+    for (size_t i = 0; i < suns.size(); i++) SetupLight((int)i, suns[i]);
 
     glEnable(GL_LIGHTING);
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmb);
@@ -1221,10 +1158,7 @@ void DrawSolarSystem(float time) {
 
             glTranslatef(mx, 0, mz);
 
-            SetMaterial(
-                CFG.moonIlumination * illumination,
-                CFG.moonIlumination * illumination,
-                CFG.moonIlumination * illumination
+            SetMaterial(CFG.moonIlumination * illumination, CFG.moonIlumination * illumination, CFG.moonIlumination * illumination
             );
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, m.texture);
