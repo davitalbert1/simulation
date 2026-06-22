@@ -16,9 +16,5 @@ void ApplyCamera(const Camera& cam) {
     float eyeY = cam.targetY + cam.distance * sinf(pitch);
     float eyeZ = cam.targetZ + cam.distance * cp * cosf(yaw);
 
-    gluLookAt(
-        eyeX, eyeY, eyeZ,
-        cam.targetX, cam.targetY, cam.targetZ,
-        0.0f, 1.0f, 0.0f
-    );
+    gluLookAt(eyeX, eyeY, eyeZ, cam.targetX, cam.targetY, cam.targetZ, 0.0f, 1.0f, 0.0f);
 }

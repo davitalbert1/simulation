@@ -1,0 +1,7 @@
+compilar:
+./build_all.bat
+
+executar:
+./physics/sistem/solar.exe
+./physics/blackHole/blackHole.exe
+./computerScience/visualOrdering/visual_ordering.exe

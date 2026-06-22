@@ -73,9 +73,7 @@ bool CreateGLWindow(const char* title, int width, int height) {
 void ProcessMessages() {
     MSG msg;
     while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-        if (msg.message == WM_QUIT) {
-            std::exit(0);
-        }
+        if (msg.message == WM_QUIT) std::exit(0);
 
         TranslateMessage(&msg);
         DispatchMessage(&msg);
