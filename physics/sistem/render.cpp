@@ -503,10 +503,14 @@ void DrawRing(const Planet& p) {
         float u0 = i / (float)segments;
         float u1 = (i + 1) / (float)segments;
 
-        glTexCoord2f(u0, 0); glVertex3f(x0i, 0, z0i);
-        glTexCoord2f(u0, 1); glVertex3f(x0o, 0, z0o);
-        glTexCoord2f(u1, 1); glVertex3f(x1o, 0, z1o);
-        glTexCoord2f(u1, 0); glVertex3f(x1i, 0, z1i);
+        glTexCoord2f(u0, 0);
+        glVertex3f(x0i, 0, z0i);
+        glTexCoord2f(u0, 1);
+        glVertex3f(x0o, 0, z0o);
+        glTexCoord2f(u1, 1);
+        glVertex3f(x1o, 0, z1o);
+        glTexCoord2f(u1, 0);
+        glVertex3f(x1i, 0, z1i);
     }
 
     glEnd();
@@ -787,16 +791,24 @@ void InitPlanets(int planetCount) {
 
         switch (p.surfaceClass) {
             case HABITABLE:
-                p.r = 0.6f; p.g = 0.8f; p.b = 0.6f;
+                p.r = 0.6f;
+                p.g = 0.8f;
+                p.b = 0.6f;
                 break;
             case ARID_DRY:
-                p.r = 0.6f; p.g = 0.5f; p.b = 0.4f;
+                p.r = 0.6f;
+                p.g = 0.5f;
+                p.b = 0.4f;
                 break;
             case ARID_HOT:
-                p.r = 0.8f; p.g = 0.4f; p.b = 0.2f;
+                p.r = 0.8f;
+                p.g = 0.4f;
+                p.b = 0.2f;
                 break;
             case ARID_FROZEN:
-                p.r = 0.7f; p.g = 0.8f; p.b = 0.9f;
+                p.r = 0.7f;
+                p.g = 0.8f;
+                p.b = 0.9f;
                 break;
         }
 
@@ -816,11 +828,15 @@ void InitPlanets(int planetCount) {
                 break;
             case ICE:
                 p.texture = GeneratePlanetTexture(256, ShadeIce, &p);
-                p.r = 0.7f; p.g = 0.9f; p.b = 1.0f;
+                p.r = 0.7f;
+                p.g = 0.9f;
+                p.b = 1.0f;
                 break;
             case LAVA:
                 p.texture = GeneratePlanetTexture(256, ShadeLava, &p);
-                p.r = 1.0f; p.g = 0.4f; p.b = 0.1f;
+                p.r = 1.0f;
+                p.g = 0.4f;
+                p.b = 0.1f;
                 break;
             case GAS:
                 p.texture = GeneratePlanetTexture( 256, ShadeGas, &p);

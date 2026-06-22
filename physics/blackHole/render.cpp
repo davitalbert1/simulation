@@ -98,6 +98,7 @@ static void DrawAccretionDisk(float time) {
         float heat1 = 1.0f - t1;
 
         glBegin(GL_QUAD_STRIP);
+
         for (int i = 0; i <= segments; i++) {
             float a = 2.0f * (float)M_PI * i / segments;
             float swirl = time * (1.8f + heat0 * 2.2f);

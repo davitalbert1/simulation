@@ -222,9 +222,7 @@ struct MonteCarloSolver {
             float x = (float)rand() / RAND_MAX * 2.0f - 1.0f;
             float y = (float)rand() / RAND_MAX * 2.0f - 1.0f;
             bool inside = (x*x + y*y <= 1.0f);
-            if (inside) {
-                insidePoints++;
-            }
+            if (inside) insidePoints++;
             totalPoints++;
             
             if (points.size() < 4000) {
@@ -234,9 +232,7 @@ struct MonteCarloSolver {
                 points[idx] = {x, y, inside};
             }
         }
-        if (totalPoints > 0) {
-            value = 4.0 * (double)insidePoints / totalPoints;
-        }
+        if (totalPoints > 0) value = 4.0 * (double)insidePoints / totalPoints;
         recordHistory();
     }
 };
@@ -428,9 +424,13 @@ bool DrawButton(float x, float y, float w, float h, const char* label, bool acti
     
     float r = 0.12f, g = 0.14f, b = 0.22f;
     if (active) {
-        r = 0.16f; g = 0.40f; b = 0.90f;
+        r = 0.16f;
+        g = 0.40f;
+        b = 0.90f;
     } else if (hovered) {
-        r = 0.20f; g = 0.23f; b = 0.35f;
+        r = 0.20f;
+        g = 0.23f;
+        b = 0.35f;
     }
     
     DrawRect(x, y, w, h, r, g, b);
@@ -463,19 +463,21 @@ void DrawDigitsComparison(float x, float y, double computedVal) {
         char displayStr[2] = { ch, '\0' };
         
         if (i < (int)strlen(strTrue)) {
-            if (strVal[i] != strTrue[i]) {
-                correct = false;
-            }
+            if (strVal[i] != strTrue[i]) correct = false;
         } else {
             correct = false;
         }
         
         float r = 0.9f, g = 0.2f, b = 0.2f;
         if (correct) {
-            r = 0.2f; g = 0.8f; b = 0.2f;
+            r = 0.2f;
+            g = 0.8f;
+            b = 0.2f;
         }
         if (ch == '.') {
-            r = 0.7f; g = 0.7f; b = 0.8f;
+            r = 0.7f;
+            g = 0.7f;
+            b = 0.8f;
         }
         
         PrintString(cx, y, displayStr, fontBaseBold, r, g, b);
@@ -653,12 +655,25 @@ void DrawGLScene() {
     long long currentSteps = 0;
     int correctDigits = 0;
     
-    if (activeAlgo == 0) { currentVal = leibniz.value; currentSteps = leibniz.k; }
-    else if (activeAlgo == 1) { currentVal = nilakantha.value; currentSteps = nilakantha.k; }
-    else if (activeAlgo == 2) { currentVal = monteCarlo.value; currentSteps = monteCarlo.totalPoints; }
-    else if (activeAlgo == 3) { currentVal = archimedes.value; currentSteps = archimedes.sides; }
-    else if (activeAlgo == 4) { currentVal = gaussLegendre.value; currentSteps = gaussLegendre.iteration; }
-    else if (activeAlgo == 5) { currentVal = chudnovsky.value; currentSteps = chudnovsky.q; }
+    if (activeAlgo == 0) {
+        currentVal = leibniz.value;
+        currentSteps = leibniz.k;
+    } else if (activeAlgo == 1) {
+        currentVal = nilakantha.value;
+        currentSteps = nilakantha.k;
+    } else if (activeAlgo == 2) {
+        currentVal = monteCarlo.value;
+        currentSteps = monteCarlo.totalPoints;
+    } else if (activeAlgo == 3) {
+        currentVal = archimedes.value;
+        currentSteps = archimedes.sides;
+    } else if (activeAlgo == 4) {
+        currentVal = gaussLegendre.value;
+        currentSteps = gaussLegendre.iteration;
+    } else if (activeAlgo == 5) {
+        currentVal = chudnovsky.value;
+        currentSteps = chudnovsky.q;
+    }
     
     correctDigits = CountCorrectDigits(currentVal);
     
@@ -871,8 +886,15 @@ void DrawGLScene() {
                 
                 int match = CountCorrectDigits(r.piVal);
                 float pr = 0.9f, pg = 0.2f, pb = 0.2f;
-                if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; }
-                else if (match > 0) { pr = 0.9f; pg = 0.7f; pb = 0.1f; }
+                if (match >= 15) {
+                    pr = 0.2f;
+                    pg = 0.8f;
+                    pb = 0.2f;
+                } else if (match > 0) {
+                    pr = 0.9f;
+                    pg = 0.7f;
+                    pb = 0.1f;
+                }
                 PrintString(tx + 510.0f, ry + 4.0f, piStr, fontBaseBold, pr, pg, pb);
             }
             
@@ -919,8 +941,15 @@ void DrawGLScene() {
                 
                 int match = CountCorrectDigits(r.piVal);
                 float pr = 0.9f, pg = 0.2f, pb = 0.2f;
-                if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; }
-                else if (match > 0) { pr = 0.9f; pg = 0.7f; pb = 0.1f; }
+                if (match >= 15) {
+                    pr = 0.2f;
+                    pg = 0.8f;
+                    pb = 0.2f;
+                } else if (match > 0) {
+                    pr = 0.9f;
+                    pg = 0.7f;
+                    pb = 0.1f;
+                }
                 PrintString(tx + 510.0f, ry + 4.0f, piStr, fontBaseBold, pr, pg, pb);
             }
             
