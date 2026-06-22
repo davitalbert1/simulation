@@ -3,7 +3,6 @@ setlocal
 
 set "EXE_NAME=star_lifecycle.exe"
 
-rem Adiciona o caminho do compilador MinGW caso nao esteja no PATH
 where g++ >nul 2>&1
 if %errorlevel% neq 0 (
     if exist "C:\msys64\mingw64\bin" (
