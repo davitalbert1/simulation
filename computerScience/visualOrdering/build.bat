@@ -3,6 +3,16 @@ setlocal
 
 set "EXE_NAME=visual_ordering.exe"
 
+rem Adiciona o caminho do compilador MinGW caso nao esteja no PATH
+where g++ >nul 2>&1
+if %errorlevel% neq 0 (
+    if exist "C:\msys64\mingw64\bin" (
+        set "PATH=C:\msys64\mingw64\bin;%PATH%"
+    ) else if exist "D:\msys64\mingw64\bin" (
+        set "PATH=D:\msys64\mingw64\bin;%PATH%"
+    )
+)
+
 rem Verifica se o executavel ja existe
 if exist "%EXE_NAME%" (
     rem Compara datas usando PowerShell para ver se algum arquivo fonte e mais novo que o executavel

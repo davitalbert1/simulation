@@ -163,6 +163,11 @@ enum TextureStyle {
 };
 
 extern std::vector<Planet> planets;
+extern std::vector<Sun> suns;
+
+void SaveSystemToFile(const char* filepath);
+bool LoadSystemFromFile(const char* filepath);
+void RebuildSystemTextures();
 
 void InitPlanetTextures();
 void InitSuns();
