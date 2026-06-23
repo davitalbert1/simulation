@@ -1190,3 +1190,335 @@ void DrawSolarSystem(float time) {
     glDisable(GL_LIGHTING);
     glPopMatrix();
 }
+
+// =======================================================
+// SERIALIZAÇÃO E PARSING DE JSON PARA O SISTEMA ESTELAR
+// =======================================================
+#include <string>
+#include <cstdio>
+#include <cstring>
+
+struct JsonVal {
+    enum Type { NIL, NUM, STR, BOOL, OBJ, ARR };
+    Type type = NIL;
+    double numVal = 0.0;
+    std::string strVal;
+    bool boolVal = false;
+    std::vector<std::pair<std::string, JsonVal>> objVal;
+    std::vector<JsonVal> arrVal;
+
+    JsonVal get(const std::string& key) const {
+        if (type == OBJ) {
+            for (const auto& pair : objVal) {
+                if (pair.first == key) return pair.second;
+            }
+        }
+        return JsonVal();
+    }
+};
+
+struct ParseState {
+    const char* p;
+    void skipWhitespace() {
+        while (*p && (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r' || *p == ',' || *p == ':')) {
+            p++;
+        }
+    }
+};
+
+bool isDigitChar(char c) {
+    return c >= '0' && c <= '9';
+}
+
+JsonVal parseJsonValue(ParseState& s);
+
+std::string parseJsonString(ParseState& s) {
+    s.skipWhitespace();
+    if (*s.p != '"') return "";
+    s.p++;
+    const char* start = s.p;
+    while (*s.p && *s.p != '"') {
+        s.p++;
+    }
+    std::string str(start, s.p);
+    if (*s.p == '"') s.p++;
+    return str;
+}
+
+JsonVal parseJsonObject(ParseState& s) {
+    JsonVal v;
+    v.type = JsonVal::OBJ;
+    s.skipWhitespace();
+    if (*s.p != '{') return v;
+    s.p++;
+    
+    while (true) {
+        s.skipWhitespace();
+        if (*s.p == '}') {
+            s.p++;
+            break;
+        }
+        std::string key = parseJsonString(s);
+        s.skipWhitespace();
+        JsonVal val = parseJsonValue(s);
+        v.objVal.push_back({key, val});
+        s.skipWhitespace();
+        if (*s.p == ',') s.p++;
+        else if (*s.p == '}') {
+            s.p++;
+            break;
+        } else if (*s.p == '\0') {
+            break;
+        }
+    }
+    return v;
+}
+
+JsonVal parseJsonArray(ParseState& s) {
+    JsonVal v;
+    v.type = JsonVal::ARR;
+    s.skipWhitespace();
+    if (*s.p != '[') return v;
+    s.p++;
+    
+    while (true) {
+        s.skipWhitespace();
+        if (*s.p == ']') {
+            s.p++;
+            break;
+        }
+        JsonVal val = parseJsonValue(s);
+        v.arrVal.push_back(val);
+        s.skipWhitespace();
+        if (*s.p == ',') s.p++;
+        else if (*s.p == ']') {
+            s.p++;
+            break;
+        } else if (*s.p == '\0') {
+            break;
+        }
+    }
+    return v;
+}
+
+JsonVal parseJsonValue(ParseState& s) {
+    s.skipWhitespace();
+    JsonVal v;
+    if (*s.p == '"') {
+        v.type = JsonVal::STR;
+        v.strVal = parseJsonString(s);
+    } else if (*s.p == '{') {
+        return parseJsonObject(s);
+    } else if (*s.p == '[') {
+        return parseJsonArray(s);
+    } else if (*s.p == 't' || *s.p == 'f') {
+        v.type = JsonVal::BOOL;
+        if (strncmp(s.p, "true", 4) == 0) {
+            v.boolVal = true;
+            s.p += 4;
+        } else {
+            v.boolVal = false;
+            s.p += 5;
+        }
+    } else if (isDigitChar(*s.p) || *s.p == '-' || *s.p == '.') {
+        v.type = JsonVal::NUM;
+        char* end;
+        v.numVal = strtod(s.p, &end);
+        s.p = end;
+    }
+    return v;
+}
+
+void SaveSystemToFile(const char* filepath) {
+    FILE* f = fopen(filepath, "w");
+    if (!f) return;
+    fprintf(f, "{\n");
+    fprintf(f, "  \"suns\": [\n");
+    for (size_t i = 0; i < suns.size(); ++i) {
+        fprintf(f, "    {\n");
+        fprintf(f, "      \"x\": %f,\n", suns[i].x);
+        fprintf(f, "      \"y\": %f,\n", suns[i].y);
+        fprintf(f, "      \"z\": %f,\n", suns[i].z);
+        fprintf(f, "      \"radius\": %f,\n", suns[i].radius);
+        fprintf(f, "      \"temperature\": %f,\n", suns[i].temperature);
+        fprintf(f, "      \"mass\": %f,\n", suns[i].mass);
+        fprintf(f, "      \"color\": {\"r\": %f, \"g\": %f, \"b\": %f}\n", suns[i].color.r, suns[i].color.g, suns[i].color.b);
+        fprintf(f, "    }%s\n", (i == suns.size() - 1) ? "" : ",");
+    }
+    fprintf(f, "  ],\n");
+    fprintf(f, "  \"planets\": [\n");
+    for (size_t i = 0; i < planets.size(); ++i) {
+        fprintf(f, "    {\n");
+        fprintf(f, "      \"distance\": %f,\n", planets[i].distance);
+        fprintf(f, "      \"speed\": %f,\n", planets[i].speed);
+        fprintf(f, "      \"size\": %f,\n", planets[i].size);
+        fprintf(f, "      \"r\": %f, \"g\": %f, \"b\": %f,\n", planets[i].r, planets[i].g, planets[i].b);
+        fprintf(f, "      \"inclination\": %f,\n", planets[i].inclination);
+        fprintf(f, "      \"semiMajor\": %f,\n", planets[i].semiMajor);
+        fprintf(f, "      \"semiMinor\": %f,\n", planets[i].semiMinor);
+        fprintf(f, "      \"eccentricity\": %f,\n", planets[i].eccentricity);
+        fprintf(f, "      \"temperature\": %f,\n", planets[i].temperature);
+        fprintf(f, "      \"humidity\": %f,\n", planets[i].humidity);
+        fprintf(f, "      \"oceanLevel\": %f,\n", planets[i].oceanLevel);
+        fprintf(f, "      \"habitable\": %s,\n", planets[i].habitable ? "true" : "false");
+        fprintf(f, "      \"type\": %d,\n", (int)planets[i].type);
+        fprintf(f, "      \"surfaceClass\": %d,\n", (int)planets[i].surfaceClass);
+        fprintf(f, "      \"ring\": {\n");
+        fprintf(f, "        \"innerRadius\": %f,\n", planets[i].ring.innerRadius);
+        fprintf(f, "        \"outerRadius\": %f,\n", planets[i].ring.outerRadius);
+        fprintf(f, "        \"tilt\": %f,\n", planets[i].ring.tilt);
+        fprintf(f, "        \"enabled\": %s\n", planets[i].ring.enabled ? "true" : "false");
+        fprintf(f, "      },\n");
+        
+        fprintf(f, "      \"moons\": [\n");
+        for (size_t m = 0; m < planets[i].moons.size(); ++m) {
+            fprintf(f, "        {\n");
+            fprintf(f, "          \"size\": %f,\n", planets[i].moons[m].size);
+            fprintf(f, "          \"distance\": %f,\n", planets[i].moons[m].distance);
+            fprintf(f, "          \"speed\": %f,\n", planets[i].moons[m].speed);
+            fprintf(f, "          \"angleOffset\": %f\n", planets[i].moons[m].angleOffset);
+            fprintf(f, "        }%s\n", (m == planets[i].moons.size() - 1) ? "" : ",");
+        }
+        fprintf(f, "      ],\n");
+
+        fprintf(f, "      \"asteroids\": [\n");
+        for (size_t a = 0; a < planets[i].asteroids.size(); ++a) {
+            fprintf(f, "        {\n");
+            fprintf(f, "          \"angle\": %f,\n", planets[i].asteroids[a].angle);
+            fprintf(f, "          \"distance\": %f,\n", planets[i].asteroids[a].distance);
+            fprintf(f, "          \"size\": %f,\n", planets[i].asteroids[a].size);
+            fprintf(f, "          \"speed\": %f,\n", planets[i].asteroids[a].speed);
+            fprintf(f, "          \"tilt\": %f,\n", planets[i].asteroids[a].tilt);
+            fprintf(f, "          \"height\": %f\n", planets[i].asteroids[a].height);
+            fprintf(f, "        }%s\n", (a == planets[i].asteroids.size() - 1) ? "" : ",");
+        }
+        fprintf(f, "      ]\n");
+        
+        fprintf(f, "    }%s\n", (i == planets.size() - 1) ? "" : ",");
+    }
+    fprintf(f, "  ]\n");
+    fprintf(f, "}\n");
+    fclose(f);
+}
+
+void RebuildSystemTextures() {
+    for (auto& s : suns) {
+        s.texture = GenerateSunTexture(256);
+    }
+    for (auto& p : planets) {
+        if (p.type == ROCKY) {
+            if (p.surfaceClass == HABITABLE) {
+                p.texture = GeneratePlanetTexture(256, ShadeHabitable, &p);
+            } else {
+                p.texture = GeneratePlanetTexture(256, ShadeRock, &p);
+            }
+        } else if (p.type == ICE) {
+            p.texture = GeneratePlanetTexture(256, ShadeIce, &p);
+        } else if (p.type == LAVA) {
+            p.texture = GeneratePlanetTexture(256, ShadeLava, &p);
+        } else if (p.type == GAS) {
+            p.texture = GeneratePlanetTexture(256, ShadeGas, &p);
+        } else if (p.type == ASTEROID_FIELD) {
+            p.texture = texRocky;
+        }
+        
+        for (auto& m : p.moons) {
+            m.texture = texRocky;
+        }
+    }
+}
+
+bool LoadSystemFromFile(const char* filepath) {
+    FILE* f = fopen(filepath, "r");
+    if (!f) return false;
+    fseek(f, 0, SEEK_END);
+    long size = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    std::string content(size, '\0');
+    size_t readBytes = fread(&content[0], 1, size, f);
+    fclose(f);
+    if (readBytes == 0) return false;
+
+    ParseState s;
+    s.p = content.c_str();
+    s.skipWhitespace();
+    JsonVal root = parseJsonObject(s);
+
+    JsonVal sunsVal = root.get("suns");
+    JsonVal planetsVal = root.get("planets");
+
+    if (sunsVal.type != JsonVal::ARR || planetsVal.type != JsonVal::ARR) {
+        return false;
+    }
+
+    suns.clear();
+    for (const auto& sv : sunsVal.arrVal) {
+        Sun sun = {};
+        sun.x = (float)sv.get("x").numVal;
+        sun.y = (float)sv.get("y").numVal;
+        sun.z = (float)sv.get("z").numVal;
+        sun.radius = (float)sv.get("radius").numVal;
+        sun.temperature = (float)sv.get("temperature").numVal;
+        sun.mass = (float)sv.get("mass").numVal;
+        JsonVal colorVal = sv.get("color");
+        sun.color.r = (float)colorVal.get("r").numVal;
+        sun.color.g = (float)colorVal.get("g").numVal;
+        sun.color.b = (float)colorVal.get("b").numVal;
+        suns.push_back(sun);
+    }
+
+    planets.clear();
+    for (const auto& pv : planetsVal.arrVal) {
+        Planet planet = {};
+        planet.distance = (float)pv.get("distance").numVal;
+        planet.speed = (float)pv.get("speed").numVal;
+        planet.size = (float)pv.get("size").numVal;
+        planet.r = (float)pv.get("r").numVal;
+        planet.g = (float)pv.get("g").numVal;
+        planet.b = (float)pv.get("b").numVal;
+        planet.inclination = (float)pv.get("inclination").numVal;
+        planet.semiMajor = (float)pv.get("semiMajor").numVal;
+        planet.semiMinor = (float)pv.get("semiMinor").numVal;
+        planet.eccentricity = (float)pv.get("eccentricity").numVal;
+        planet.temperature = (float)pv.get("temperature").numVal;
+        planet.humidity = (float)pv.get("humidity").numVal;
+        planet.oceanLevel = (float)pv.get("oceanLevel").numVal;
+        planet.habitable = pv.get("habitable").boolVal;
+        planet.type = (PlanetType)(int)pv.get("type").numVal;
+        planet.surfaceClass = (SurfaceClass)(int)pv.get("surfaceClass").numVal;
+
+        JsonVal ringVal = pv.get("ring");
+        planet.ring.innerRadius = (float)ringVal.get("innerRadius").numVal;
+        planet.ring.outerRadius = (float)ringVal.get("outerRadius").numVal;
+        planet.ring.tilt = (float)ringVal.get("tilt").numVal;
+        planet.ring.enabled = ringVal.get("enabled").boolVal;
+
+        JsonVal moonsVal = pv.get("moons");
+        for (const auto& mv : moonsVal.arrVal) {
+            Moon moon = {};
+            moon.size = (float)mv.get("size").numVal;
+            moon.distance = (float)mv.get("distance").numVal;
+            moon.speed = (float)mv.get("speed").numVal;
+            moon.angleOffset = (float)mv.get("angleOffset").numVal;
+            planet.moons.push_back(moon);
+        }
+
+        JsonVal astVal = pv.get("asteroids");
+        for (const auto& av : astVal.arrVal) {
+            Asteroid ast = {};
+            ast.angle = (float)av.get("angle").numVal;
+            ast.distance = (float)av.get("distance").numVal;
+            ast.size = (float)av.get("size").numVal;
+            ast.speed = (float)av.get("speed").numVal;
+            ast.tilt = (float)av.get("tilt").numVal;
+            ast.height = (float)av.get("height").numVal;
+            planet.asteroids.push_back(ast);
+        }
+
+        planets.push_back(planet);
+    }
+
+    RebuildSystemTextures();
+    return true;
+}
+
