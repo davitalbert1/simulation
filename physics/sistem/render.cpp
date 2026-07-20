@@ -1251,7 +1251,7 @@ JsonVal parseJsonObject(ParseState& s) {
     s.skipWhitespace();
     if (*s.p != '{') return v;
     s.p++;
-    
+
     while (true) {
         s.skipWhitespace();
         if (*s.p == '}') {
@@ -1280,7 +1280,7 @@ JsonVal parseJsonArray(ParseState& s) {
     s.skipWhitespace();
     if (*s.p != '[') return v;
     s.p++;
-    
+
     while (true) {
         s.skipWhitespace();
         if (*s.p == ']') {
@@ -1369,7 +1369,7 @@ void SaveSystemToFile(const char* filepath) {
         fprintf(f, "        \"tilt\": %f,\n", planets[i].ring.tilt);
         fprintf(f, "        \"enabled\": %s\n", planets[i].ring.enabled ? "true" : "false");
         fprintf(f, "      },\n");
-        
+
         fprintf(f, "      \"moons\": [\n");
         for (size_t m = 0; m < planets[i].moons.size(); ++m) {
             fprintf(f, "        {\n");
@@ -1393,7 +1393,7 @@ void SaveSystemToFile(const char* filepath) {
             fprintf(f, "        }%s\n", (a == planets[i].asteroids.size() - 1) ? "" : ",");
         }
         fprintf(f, "      ]\n");
-        
+
         fprintf(f, "    }%s\n", (i == planets.size() - 1) ? "" : ",");
     }
     fprintf(f, "  ]\n");
@@ -1421,7 +1421,7 @@ void RebuildSystemTextures() {
         } else if (p.type == ASTEROID_FIELD) {
             p.texture = texRocky;
         }
-        
+
         for (auto& m : p.moons) {
             m.texture = texRocky;
         }

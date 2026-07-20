@@ -34,7 +34,7 @@ void BuildFontsHUD() {
                                ANTIALIASED_QUALITY, FF_DONTCARE | DEFAULT_PITCH, "Segoe UI");
     HFONT oldFont = (HFONT)SelectObject(g_hdc, fontReg);
     wglUseFontBitmaps(g_hdc, 32, 96, fontBaseRegular);
-    
+
     fontBaseBold = glGenLists(96);
     HFONT fontBold = CreateFont(-13, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
                                 ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -73,9 +73,7 @@ std::string ShowOpenFileDialog(HWND hwnd) {
     ofn.lpstrFile = filename;
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
-    if (GetOpenFileName(&ofn)) {
-        return std::string(filename);
-    }
+    if (GetOpenFileName(&ofn)) return std::string(filename);
     return "";
 }
 
@@ -89,9 +87,7 @@ std::string ShowSaveFileDialog(HWND hwnd) {
     ofn.nMaxFile = MAX_PATH;
     ofn.lpstrDefExt = "json";
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR;
-    if (GetSaveFileName(&ofn)) {
-        return std::string(filename);
-    }
+    if (GetSaveFileName(&ofn)) return std::string(filename);
     return "";
 }
 
@@ -110,10 +106,8 @@ void DrawHUD2D(int mx, int my, bool clicked) {
 
     // Botão de Ajuda
     bool hoveredHelp = (mx >= 710 && mx <= 785 && my >= 550 && my <= 585);
-    if (hoveredHelp && clicked) {
-        showHelpCard = !showHelpCard;
-    }
-    
+    if (hoveredHelp && clicked) showHelpCard = !showHelpCard;
+
     glColor4f(0.12f, 0.14f, 0.22f, 0.8f);
     glBegin(GL_QUADS);
     glVertex2f(710, 550);
@@ -121,7 +115,7 @@ void DrawHUD2D(int mx, int my, bool clicked) {
     glVertex2f(785, 585);
     glVertex2f(710, 585);
     glEnd();
-    
+
     glColor3f(0.3f, 0.6f, 0.9f);
     glLineWidth(1.5f);
     glBegin(GL_LINE_LOOP);
@@ -130,7 +124,7 @@ void DrawHUD2D(int mx, int my, bool clicked) {
     glVertex2f(785, 585);
     glVertex2f(710, 585);
     glEnd();
-    
+
     PrintStringHUD(720, 562, showHelpCard ? "Fechar" : "Ajuda (H)", fontBaseBold, 1.0f, 1.0f, 1.0f);
 
     // Botão de Salvar
@@ -160,9 +154,7 @@ void DrawHUD2D(int mx, int my, bool clicked) {
     if (hoveredLoad && clicked) {
         std::string path = ShowOpenFileDialog(g_hwnd);
         if (!path.empty()) {
-            if (LoadSystemFromFile(path.c_str())) {
-                simulationStartTime = GetTickCount();
-            }
+            if (LoadSystemFromFile(path.c_str())) simulationStartTime = GetTickCount();
         }
     }
     glColor4f(0.20f, 0.12f, 0.14f, 0.8f);
@@ -187,7 +179,7 @@ void DrawHUD2D(int mx, int my, bool clicked) {
         float h = 240.0f;
         float cardX = 15.0f;
         float cardY = 345.0f;
-        
+
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glColor4f(0.05f, 0.06f, 0.11f, 0.90f);
@@ -197,7 +189,7 @@ void DrawHUD2D(int mx, int my, bool clicked) {
         glVertex2f(cardX + w, cardY + h);
         glVertex2f(cardX, cardY + h);
         glEnd();
-        
+
         glColor3f(0.3f, 0.6f, 0.9f);
         glLineWidth(2.0f);
         glBegin(GL_LINE_LOOP);
@@ -331,9 +323,7 @@ int main() {
         if (lPressed && !lKeyDown) {
             std::string path = ShowOpenFileDialog(g_hwnd);
             if (!path.empty()) {
-                if (LoadSystemFromFile(path.c_str())) {
-                    simulationStartTime = GetTickCount();
-                }
+                if (LoadSystemFromFile(path.c_str())) simulationStartTime = GetTickCount();
             }
         }
         lKeyDown = lPressed;

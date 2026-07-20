@@ -6,9 +6,7 @@ for /r %%F in (build.bat) do (
     if errorlevel 1 (
         if exist "%%F" (
             echo.
-            echo =====================================
             echo Executando %%F
-            echo =====================================
 
             pushd "%%~dpF"
             call "%%~nxF"
@@ -19,4 +17,4 @@ for /r %%F in (build.bat) do (
 
 echo.
 echo Todos os builds finalizados.
-pause
+exit

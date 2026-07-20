@@ -28,7 +28,7 @@ void BuildFonts() {
                                ANTIALIASED_QUALITY, FF_DONTCARE | DEFAULT_PITCH, "Segoe UI");
     HFONT oldFont = (HFONT)SelectObject(g_hdc, fontReg);
     wglUseFontBitmaps(g_hdc, 32, 96, fontBaseRegular);
-    
+
     fontBaseBold = glGenLists(96);
     HFONT fontBold = CreateFont(-13, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
                                 ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -150,7 +150,7 @@ struct LeibnizSolver {
         double logErr = (err < 1e-16) ? -16.0 : std::log10(err);
         double logIter = (k < 1) ? 0.0 : std::log10((double)k);
         history.push_back({logIter, logErr});
-        
+
         recentValues.push_back(value);
         if (recentValues.size() > 200) {
             recentValues.erase(recentValues.begin());
@@ -187,7 +187,7 @@ struct NilakanthaSolver {
         double logErr = (err < 1e-16) ? -16.0 : std::log10(err);
         double logIter = (k < 1) ? 0.0 : std::log10((double)k);
         history.push_back({logIter, logErr});
-        
+
         recentValues.push_back(value);
         if (recentValues.size() > 200) {
             recentValues.erase(recentValues.begin());
@@ -241,7 +241,7 @@ struct MonteCarloSolver {
                 insidePoints++;
             }
             totalPoints++;
-            
+
             if (points.size() < 4000) {
                 points.push_back({x, y, inside});
             } else {
@@ -284,7 +284,7 @@ struct ArchimedesSolver {
         if (sides > 1e16) return;
         double next_circumscribed = (2.0 * circumscribed * inscribed) / (circumscribed + inscribed);
         double next_inscribed = sqrt(next_circumscribed * inscribed);
-        
+
         circumscribed = next_circumscribed;
         inscribed = next_inscribed;
         sides *= 2;
@@ -331,14 +331,14 @@ struct GaussLegendreSolver {
         double next_b = sqrt(a * b);
         double next_t = t - p * (a - next_a) * (a - next_a);
         double next_p = 2.0 * p;
-        
+
         a = next_a;
         b = next_b;
         t = next_t;
         p = next_p;
         iteration++;
         value = (a + b) * (a + b) / (4.0 * t);
-        
+
         rows.push_back({(int)iteration, a, b, t, p, value});
         recordHistory();
     }
@@ -385,11 +385,11 @@ struct ChudnovskySolver {
         double num = -24.0 * (6.0 * q - 1.0) * (2.0 * q - 1.0) * (6.0 * q - 5.0);
         double den = (double)q * q * q * 262537412640768000.0;
         A *= (num / den);
-        
+
         double term = A * (545140134.0 * q + 13591409.0);
         sum += term;
         value = 1.0 / (12.0 * sum);
-        
+
         rows.push_back({(int)q, A, term, value});
         recordHistory();
     }
@@ -500,78 +500,78 @@ void BigPiWorker(int requestedDigits, int saveInterval) {
     bigPiTotalDigits.store(requestedDigits);
     bigPiCalculatedDigits.store(0);
     bigPiIterations.store(0);
-    
+
     int size = requestedDigits + 20; // 20 dígitos de guarda
-    
+
     BigInt piVal;
     piVal.setZero(size);
-    
+
     BigInt term5;
     term5.setPowerOf10(size - 1, size);
     term5.div(5);
-    
+
     BigInt term239;
     term239.setPowerOf10(size - 1, size);
     term239.div(239);
-    
+
     int k = 1;
     while ((!term5.isZero() || !term239.isZero()) && !cancelBigPi.load()) {
         BigInt t5_calc = term5;
         t5_calc.div(2 * k - 1);
-        
+
         long long carry = 0;
         for (int i = 0; i < size; ++i) {
             long long cur = t5_calc.digits[i] * 16 + carry;
             t5_calc.digits[i] = cur % 10;
             carry = cur / 10;
         }
-        
+
         BigInt t239_calc = term239;
         t239_calc.div(2 * k - 1);
-        
+
         carry = 0;
         for (int i = 0; i < size; ++i) {
             long long cur = t239_calc.digits[i] * 4 + carry;
             t239_calc.digits[i] = cur % 10;
             carry = cur / 10;
         }
-        
+
         t5_calc.sub(t239_calc);
-        
+
         if (k % 2 == 1) {
             piVal.add(t5_calc);
         } else {
             piVal.sub(t5_calc);
         }
-        
+
         term5.div(5); term5.div(5);
         term239.div(239); term239.div(239);
-        
+
         bigPiIterations.store(k);
-        
+
         int convDigits = (int)(1.39794 * k);
         if (convDigits > requestedDigits) convDigits = requestedDigits;
         bigPiCalculatedDigits.store(convDigits);
-        
+
         std::string currentPiStr = FormatPiString(piVal, size);
         {
             std::lock_guard<std::mutex> lock(bigPiMutex);
             bigPiResultStr = currentPiStr;
         }
-        
+
         if (k % saveInterval == 0) SavePiJson(currentPiStr, convDigits, requestedDigits, k, false);
-        
+
         k++;
         std::this_thread::sleep_for(std::chrono::microseconds(100));
     }
-    
+
     std::string finalPiStr = FormatPiString(piVal, size);
     {
         std::lock_guard<std::mutex> lock(bigPiMutex);
         bigPiResultStr = finalPiStr;
     }
     SavePiJson(finalPiStr, bigPiCalculatedDigits.load(), requestedDigits, bigPiIterations.load(), !cancelBigPi.load());
-    
+
     bigPiRunning.store(false);
 }
 
@@ -617,7 +617,7 @@ void UpdateSimulation() {
     leibniz.step(steps);
     nilakantha.step(steps);
     monteCarlo.step(steps);
-    
+
     static int frameCounter = 0;
     frameCounter++;
     if (frameCounter % 15 == 0) {
@@ -629,7 +629,7 @@ void UpdateSimulation() {
 
 bool DrawButton(float x, float y, float w, float h, const char* label, bool active, int mx, int my, bool clicked) {
     bool hovered = (mx >= x && mx <= x + w && my >= y && my <= y + h);
-    
+
     float r = 0.12f, g = 0.14f, b = 0.22f;
     if (active) {
         r = 0.16f;
@@ -640,17 +640,17 @@ bool DrawButton(float x, float y, float w, float h, const char* label, bool acti
         g = 0.23f;
         b = 0.35f;
     }
-    
+
     DrawRect(x, y, w, h, r, g, b);
     DrawRectOutline(x, y, w, h, 0.3f, 0.4f, 0.6f);
-    
+
     int labelLen = strlen(label);
     float textW = labelLen * 7.0f;
     float tx = x + (w - textW) / 2.0f;
     float ty = y + (h - 10.0f) / 2.0f;
-    
+
     PrintString(tx, ty, label, fontBaseBold, 1.0f, 1.0f, 1.0f);
-    
+
     return hovered && clicked;
 }
 
@@ -659,23 +659,23 @@ void DrawDigitsComparison(float x, float y, double computedVal) {
     char strTrue[32];
     sprintf(strVal, "%.15f", computedVal);
     sprintf(strTrue, "%.15f", TRUE_PI);
-    
+
     PrintString(x, y + 40, "Dígitos (Verde = Correto, Vermelho = Incorreto):", fontBaseBold, 0.7f, 0.7f, 0.8f);
     PrintString(x, y + 20, "Alvo:  3 . 1 4 1 5 9 2 6 5 3 5 8 9 7 9", fontBaseBold, 0.2f, 0.8f, 0.2f);
     PrintString(x, y, "Calc: ", fontBaseBold, 0.7f, 0.7f, 0.8f);
-    
+
     float cx = x + 40.0f;
     bool correct = true;
     for (int i = 0; i < 17; ++i) {
         char ch = strVal[i];
         char displayStr[2] = { ch, '\0' };
-        
+
         if (i < (int)strlen(strTrue)) {
             if (strVal[i] != strTrue[i]) correct = false;
         } else {
             correct = false;
         }
-        
+
         float r = 0.9f, g = 0.2f, b = 0.2f;
         if (correct) {
             r = 0.2f;
@@ -687,7 +687,7 @@ void DrawDigitsComparison(float x, float y, double computedVal) {
             g = 0.7f;
             b = 0.8f;
         }
-        
+
         PrintString(cx, y, displayStr, fontBaseBold, r, g, b);
         cx += 12.0f;
     }
@@ -698,10 +698,10 @@ void DrawErrorGraph() {
     float y = 80.0f;
     float w = 680.0f;
     float h = 600.0f;
-    
+
     DrawRect(x, y, w, h, 0.08f, 0.09f, 0.13f);
     DrawRectOutline(x, y, w, h, 0.2f, 0.25f, 0.35f, 2.0f);
-    
+
     for (int i = 0; i >= -16; i -= 2) {
         float gy = y + h - ((double)i / -16.0) * h;
         glColor4f(0.15f, 0.18f, 0.28f, 0.5f);
@@ -710,12 +710,12 @@ void DrawErrorGraph() {
         glVertex2f(x, gy);
         glVertex2f(x + w, gy);
         glEnd();
-        
+
         char lbl[16];
         sprintf(lbl, "10^%d", i);
         PrintString(x - 45.0f, gy - 4.0f, lbl, fontBaseRegular, 0.6f, 0.6f, 0.7f);
     }
-    
+
     for (int i = 0; i <= 6; ++i) {
         float gx = x + ((double)i / 6.0) * w;
         glColor4f(0.15f, 0.18f, 0.28f, 0.5f);
@@ -723,19 +723,19 @@ void DrawErrorGraph() {
         glVertex2f(gx, y);
         glVertex2f(gx, y + h);
         glEnd();
-        
+
         char lbl[16];
         if (i == 0) strcpy(lbl, "1");
         else sprintf(lbl, "10^%d", i);
         PrintString(gx - 15.0f, y - 18.0f, lbl, fontBaseRegular, 0.6f, 0.6f, 0.7f);
     }
-    
+
     PrintString(x + w/2 - 60.0f, y - 35.0f, "Numero de Iteracoes (Log)", fontBaseBold, 0.7f, 0.7f, 0.8f);
     PrintString(x - 30.0f, y + h + 15.0f, "Erro Absoluto (Log10)", fontBaseBold, 0.7f, 0.7f, 0.8f);
 
     auto drawCurve = [&](const std::vector<HistoryItem>& hist, float r, float g, float b, const char* name, int legendIndex) {
         if (hist.empty()) return;
-        
+
         glColor3f(r, g, b);
         glLineWidth(2.5f);
         glBegin(GL_LINE_STRIP);
@@ -743,17 +743,17 @@ void DrawErrorGraph() {
             double px = pt.iterations;
             if (px > 6.0) px = 6.0;
             if (px < 0.0) px = 0.0;
-            
+
             double pyVal = pt.logError;
             if (pyVal > 0.0) pyVal = 0.0;
             if (pyVal < -16.0) pyVal = -16.0;
-            
+
             float screenX = x + (px / 6.0) * w;
             float screenY = y + h - (pyVal / -16.0) * h;
             glVertex2f(screenX, screenY);
         }
         glEnd();
-        
+
         float lx = x + 30.0f + (legendIndex % 3) * 200.0f;
         float ly = y + h - 25.0f - (legendIndex / 3) * 20.0f;
         DrawRect(lx, ly + 2.0f, 15.0f, 8.0f, r, g, b);
@@ -771,7 +771,7 @@ void DrawErrorGraph() {
 void DrawMultilineText(float x, float y, float w, float h, const std::string& text, GLuint fontBase, float lineSpacing = 15.0f) {
     int charsPerLine = (int)(w / 7.2f);
     if (charsPerLine < 10) charsPerLine = 10;
-    
+
     float cy = y + h - 15.0f;
     size_t pos = 0;
     while (pos < text.length() && cy > y + 5.0f) {
@@ -787,30 +787,30 @@ void DrawHelpCardHUD(float cx, float cy) {
     float h = 260.0f;
     float x = cx - w / 2.0f;
     float y = cy - h / 2.0f;
-    
+
     // Fundo semi-transparente
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     DrawRect(x, y, w, h, 0.05f, 0.06f, 0.11f, 0.90f);
     DrawRectOutline(x, y, w, h, 0.3f, 0.6f, 0.9f, 2.0f);
     glDisable(GL_BLEND);
-    
+
     float textX = x + 20.0f;
     float textY = y + h - 30.0f;
-    
+
     PrintString(textX + 70.0f, textY, "AJUDA E CONTROLES", fontBaseLarge, 0.3f, 0.7f, 1.0f);
     textY -= 30.0f;
-    
+
     PrintString(textX, textY, "[ Mouse / Cliques ]", fontBaseBold, 0.9f, 0.9f, 1.0f);
     PrintString(textX + 20.0f, textY - 16.0f, "- Clique nos botoes a direita para trocar de algoritmo.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     PrintString(textX + 20.0f, textY - 32.0f, "- Mude abas (Visualizador / Grafico) no topo esquerdo.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     textY -= 55.0f;
-    
+
     PrintString(textX, textY, "[ Teclado ]", fontBaseBold, 0.9f, 0.9f, 1.0f);
     PrintString(textX + 20.0f, textY - 16.0f, "- H : Ocultar / Mostrar este card de ajuda.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     PrintString(textX + 20.0f, textY - 32.0f, "- Espaco : Pausar / Iniciar simulacao padrão.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     textY -= 55.0f;
-    
+
     PrintString(textX, textY, "[ Alta Precisao (Machin) ]", fontBaseBold, 0.9f, 0.9f, 1.0f);
     PrintString(textX + 20.0f, textY - 16.0f, "- Ajuste digitos/intervalo e clique em 'Iniciar Alta Prec.'.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     PrintString(textX + 20.0f, textY - 32.0f, "- O resultado sera exportado para 'pi_output.json'.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
@@ -818,7 +818,7 @@ void DrawHelpCardHUD(float cx, float cy) {
 
 void DrawGLScene() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
     POINT mousePos;
     GetCursorPos(&mousePos);
     ScreenToClient(g_hwnd, &mousePos);
@@ -828,19 +828,19 @@ void DrawGLScene() {
     bool currentMouseState = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
     bool clicked = currentMouseState && !lastMouseState;
     lastMouseState = currentMouseState;
-    
+
     glViewport(0, 0, 1200, 800);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, 1200, 0, 800, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    
+
     DrawRect(0, 0, 1200, 800, 0.05f, 0.05f, 0.08f);
-    
+
     DrawRect(15, 15, 750, 770, 0.09f, 0.10f, 0.15f);
     DrawRectOutline(15, 15, 750, 770, 0.18f, 0.22f, 0.35f, 2.0f);
-    
+
     DrawRect(780, 15, 405, 770, 0.09f, 0.10f, 0.15f);
     DrawRectOutline(780, 15, 405, 770, 0.18f, 0.22f, 0.35f, 2.0f);
 
@@ -849,7 +849,7 @@ void DrawGLScene() {
 
     if (DrawButton(30, 740, 150, 32, "Visualizador", activeTab == 0, mx, my, clicked)) activeTab = 0;
     if (DrawButton(190, 740, 170, 32, "Grafico de Erro (Log)", activeTab == 1, mx, my, clicked)) activeTab = 1;
-    
+
     // Botao para mostrar/ocultar card de ajuda
     if (DrawButton(630, 740, 120, 32, showHelpCard ? "Fechar Ajuda" : "Ajuda (H)", false, mx, my, clicked)) {
         showHelpCard = !showHelpCard;
@@ -864,21 +864,21 @@ void DrawGLScene() {
         "5. Gauss-Legendre",
         "6. Chudnovsky (Mais Eficiente)"
     };
-    
+
     PrintString(800, btnY + 30, "Selecione o Modelo Ativo:", fontBaseBold, 0.8f, 0.8f, 0.9f);
     for (int i = 0; i < 6; ++i) {
         if (DrawButton(800, btnY - i * 36, 365, 30, algoNames[i], activeAlgo == i, mx, my, clicked)) {
             activeAlgo = i;
         }
     }
-    
+
     float ctrlY = 240.0f;
     PrintString(800, ctrlY + 30, "Controles de Simulacao Padrão:", fontBaseBold, 0.8f, 0.8f, 0.9f);
-    
+
     if (DrawButton(800, ctrlY, 110, 30, isRunning ? "Pausar" : "Iniciar", false, mx, my, clicked)) {
         isRunning = !isRunning;
     }
-    
+
     if (DrawButton(920, ctrlY, 110, 30, "Passo a Passo", false, mx, my, clicked)) {
         isRunning = false;
         leibniz.step(1);
@@ -888,7 +888,7 @@ void DrawGLScene() {
         gaussLegendre.step();
         chudnovsky.step();
     }
-    
+
     if (DrawButton(1040, ctrlY, 125, 30, "Reiniciar Tudo", false, mx, my, clicked)) {
         ResetAll();
     }
@@ -899,7 +899,7 @@ void DrawGLScene() {
     sprintf(speedText, "Nivel: %d (%d iter/frame)", speedLevel, 
             (speedLevel==1?1:(speedLevel==2?10:(speedLevel==3?100:(speedLevel==4?1000:10000)))));
     PrintString(800, speedY, speedText, fontBaseRegular, 0.7f, 0.7f, 0.8f);
-    
+
     for (int i = 1; i <= 5; ++i) {
         char valStr[4];
         sprintf(valStr, "%d", i);
@@ -913,11 +913,11 @@ void DrawGLScene() {
     // ==========================================
     float bigPiY = 95.0f;
     PrintString(800, bigPiY + 20, "Calculo de Alta Precisao (Machin):", fontBaseBold, 0.8f, 0.8f, 0.9f);
-    
+
     char limitText[64];
     sprintf(limitText, "Lim: %d dig. [Intervalo JSON: %d]", limitDigitsSetting, saveIntervalSetting);
     PrintString(800, bigPiY, limitText, fontBaseRegular, 0.7f, 0.7f, 0.8f);
-    
+
     if (DrawButton(800, bigPiY - 32, 60, 24, "500", limitDigitsSetting == 500, mx, my, clicked)) limitDigitsSetting = 500;
     if (DrawButton(865, bigPiY - 32, 60, 24, "1000", limitDigitsSetting == 1000, mx, my, clicked)) limitDigitsSetting = 1000;
     if (DrawButton(930, bigPiY - 32, 60, 24, "2000", limitDigitsSetting == 2000, mx, my, clicked)) limitDigitsSetting = 2000;
@@ -925,7 +925,7 @@ void DrawGLScene() {
     if (DrawButton(1060, bigPiY - 32, 105, 24, "Iniciar Alta Prec.", bigPiRunning.load(), mx, my, clicked)) {
         StartBigPiCalculation(limitDigitsSetting, saveIntervalSetting);
     }
-    
+
     // Status do cálculo de alta precisão
     char bigPiStatus[128];
     if (bigPiRunning.load()) {
@@ -943,16 +943,16 @@ void DrawGLScene() {
     double currentVal = 0.0;
     long long currentSteps = 0;
     int correctDigits = 0;
-    
+
     if (activeAlgo == 0) { currentVal = leibniz.value; currentSteps = leibniz.k; }
     else if (activeAlgo == 1) { currentVal = nilakantha.value; currentSteps = nilakantha.k; }
     else if (activeAlgo == 2) { currentVal = monteCarlo.value; currentSteps = monteCarlo.totalPoints; }
     else if (activeAlgo == 3) { currentVal = archimedes.value; currentSteps = archimedes.sides; }
     else if (activeAlgo == 4) { currentVal = gaussLegendre.value; currentSteps = gaussLegendre.iteration; }
     else if (activeAlgo == 5) { currentVal = chudnovsky.value; currentSteps = chudnovsky.q; }
-    
+
     correctDigits = CountCorrectDigits(currentVal);
-    
+
     // Digits comparison layout
     float readY = 32.0f;
     DrawDigitsComparison(800, readY, currentVal);
@@ -968,12 +968,12 @@ void DrawGLScene() {
             float cx = sqX + sqW / 2.0f;
             float cy = sqY + sqH / 2.0f;
             float r = sqW / 2.0f;
-            
+
             DrawRect(sqX, sqY, sqW, sqH, 0.08f, 0.09f, 0.13f);
             DrawRectOutline(sqX, sqY, sqW, sqH, 0.3f, 0.35f, 0.45f, 2.0f);
-            
+
             DrawCircle(cx, cy, r, 0.16f, 0.40f, 0.90f, 100);
-            
+
             glPointSize(1.5f);
             glBegin(GL_POINTS);
             for (const auto& pt : monteCarlo.points) {
@@ -987,26 +987,26 @@ void DrawGLScene() {
                 glVertex2f(px, py);
             }
             glEnd();
-            
+
             char mcInfo1[64], mcInfo2[64];
             sprintf(mcInfo1, "Pontos no Circulo (Verde): %lld", monteCarlo.insidePoints);
             sprintf(mcInfo2, "Total de Pontos: %lld", monteCarlo.totalPoints);
-            
+
             PrintString(sqX + 15.0f, sqY + sqH - 25.0f, "Simulacao de Monte Carlo", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(sqX + 15.0f, sqY + sqH - 45.0f, mcInfo1, fontBaseRegular, 0.2f, 0.8f, 0.3f);
             PrintString(sqX + 15.0f, sqY + sqH - 65.0f, mcInfo2, fontBaseRegular, 0.8f, 0.8f, 0.9f);
             PrintString(sqX + 15.0f, sqY + 15.0f, "Formula: PI ~ 4 * (Pontos no Circulo / Total)", fontBaseBold, 0.8f, 0.8f, 0.9f);
-            
+
         } else if (activeAlgo == 3) {
             float cx = 390.0f;
             float cy = 460.0f;
             float r = 200.0f;
-            
+
             DrawCircle(cx, cy, r, 0.4f, 0.4f, 0.5f, 120);
-            
+
             long long s = archimedes.sides;
             int drawSides = (s > 1024) ? 1024 : (int)s;
-            
+
             glColor3f(0.2f, 0.7f, 0.9f);
             glLineWidth(1.5f);
             glBegin(GL_LINE_LOOP);
@@ -1017,7 +1017,7 @@ void DrawGLScene() {
                 glVertex2f(px, py);
             }
             glEnd();
-            
+
             glColor3f(0.9f, 0.4f, 0.2f);
             glLineWidth(1.5f);
             glBegin(GL_LINE_LOOP);
@@ -1029,29 +1029,29 @@ void DrawGLScene() {
                 glVertex2f(px, py);
             }
             glEnd();
-            
+
             PrintString(50.0f, 690.0f, "Metodo de Arquimedes (Poligonos Inscritos e Circunscritos)", fontBaseBold, 1.0f, 1.0f, 1.0f);
-            
+
             char archText1[64], archText2[64];
             sprintf(archText1, "Limite Inferior (Inscrito): %.14f", archimedes.inscribed);
             sprintf(archText2, "Limite Superior (Circunscrito): %.14f", archimedes.circumscribed);
-            
+
             PrintString(50.0f, 250.0f, archText1, fontBaseBold, 0.2f, 0.7f, 0.9f);
             PrintString(50.0f, 230.0f, archText2, fontBaseBold, 0.9f, 0.4f, 0.2f);
-            
+
             char sideStr[64];
             sprintf(sideStr, "Poligono de %lld lados (passos de duplicacao)", archimedes.sides);
             PrintString(50.0f, 670.0f, sideStr, fontBaseRegular, 0.7f, 0.7f, 0.8f);
-            
+
         } else if (activeAlgo == 0 || activeAlgo == 1) {
             float gx = 50.0f;
             float gy = 240.0f;
             float gw = 680.0f;
             float gh = 420.0f;
-            
+
             DrawRect(gx, gy, gw, gh, 0.08f, 0.09f, 0.13f);
             DrawRectOutline(gx, gy, gw, gh, 0.2f, 0.25f, 0.35f, 2.0f);
-            
+
             float pyTarget = gy + gh / 2.0f;
             glColor3f(0.2f, 0.8f, 0.3f);
             glLineWidth(1.5f);
@@ -1060,24 +1060,24 @@ void DrawGLScene() {
             glVertex2f(gx + gw, pyTarget);
             glEnd();
             PrintString(gx + 10.0f, pyTarget + 5.0f, "PI Real (3.14159...)", fontBaseBold, 0.2f, 0.8f, 0.3f);
-            
+
             const std::vector<double>& vals = (activeAlgo == 0) ? leibniz.recentValues : nilakantha.recentValues;
-            
+
             if (vals.size() > 1) {
                 double minVal = 99.0, maxVal = -99.0;
                 for (double v : vals) {
                     if (v < minVal) minVal = v;
                     if (v > maxVal) maxVal = v;
                 }
-                
+
                 double range = maxVal - minVal;
                 if (range < 0.0001) range = 0.0001;
                 double scaleMin = minVal - range * 0.1;
                 double scaleMax = maxVal + range * 0.1;
-                
+
                 if (activeAlgo == 0) glColor3f(0.9f, 0.8f, 0.2f);
                 else glColor3f(0.8f, 0.3f, 0.9f);
-                
+
                 glLineWidth(2.0f);
                 glBegin(GL_LINE_STRIP);
                 for (size_t i = 0; i < vals.size(); ++i) {
@@ -1086,14 +1086,14 @@ void DrawGLScene() {
                     glVertex2f(vx, vy);
                 }
                 glEnd();
-                
+
                 char minLbl[32], maxLbl[32];
                 sprintf(minLbl, "Min: %.6f", scaleMin);
                 sprintf(maxLbl, "Max: %.6f", scaleMax);
                 PrintString(gx - 45.0f, gy, minLbl, fontBaseRegular, 0.6f, 0.6f, 0.7f);
                 PrintString(gx - 45.0f, gy + gh - 15.0f, maxLbl, fontBaseRegular, 0.6f, 0.6f, 0.7f);
             }
-            
+
             if (activeAlgo == 0) {
                 PrintString(50.0f, 690.0f, "Serie de Gregory-Leibniz", fontBaseBold, 1.0f, 1.0f, 1.0f);
                 PrintString(50.0f, 670.0f, "Oscilacao lenta e convergencia linear (1/N)", fontBaseRegular, 0.7f, 0.7f, 0.8f);
@@ -1103,15 +1103,15 @@ void DrawGLScene() {
                 PrintString(50.0f, 670.0f, "Oscilacao e convergencia consideravelmente mais rapida (1/N^3)", fontBaseRegular, 0.7f, 0.7f, 0.8f);
                 PrintString(50.0f, 110.0f, "Formula: PI = 3 + 4/(2*3*4) - 4/(4*5*6) + 4/(6*7*8) - ...", fontBaseBold, 0.8f, 0.8f, 0.9f);
             }
-            
+
         } else if (activeAlgo == 4) {
             PrintString(50.0f, 690.0f, "Algoritmo Gauss-Legendre (Convergencia Quadratica)", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(50.0f, 670.0f, "O numero de digitos corretos dobra a cada passo!", fontBaseRegular, 0.7f, 0.7f, 0.8f);
-            
+
             float tx = 40.0f;
             float ty = 600.0f;
             float tw = 700.0f;
-            
+
             DrawRect(tx, ty, tw, 28.0f, 0.15f, 0.20f, 0.35f);
             PrintString(tx + 10.0f, ty + 8.0f, "Passo", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 60.0f, ty + 8.0f, "a_n", fontBaseBold, 1.0f, 1.0f, 1.0f);
@@ -1119,7 +1119,7 @@ void DrawGLScene() {
             PrintString(tx + 300.0f, ty + 8.0f, "t_n", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 420.0f, ty + 8.0f, "p_n", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 510.0f, ty + 8.0f, "Estimativa de PI", fontBaseBold, 1.0f, 1.0f, 1.0f);
-            
+
             for (size_t i = 0; i < gaussLegendre.rows.size() && i < 11; ++i) {
                 float ry = ty - 30.0f - i * 30.0f;
                 if (i % 2 == 0) {
@@ -1127,7 +1127,7 @@ void DrawGLScene() {
                 } else {
                     DrawRect(tx, ry - 4.0f, tw, 28.0f, 0.10f, 0.11f, 0.16f);
                 }
-                
+
                 char stepStr[16], aStr[32], bStr[32], tStr[32], pStr[32], piStr[32];
                 const auto& r = gaussLegendre.rows[i];
                 sprintf(stepStr, "%d", r.step);
@@ -1136,41 +1136,41 @@ void DrawGLScene() {
                 sprintf(tStr, "%.8f", r.t);
                 sprintf(pStr, "%.0f", r.p);
                 sprintf(piStr, "%.15f", r.piVal);
-                
+
                 PrintString(tx + 10.0f, ry + 4.0f, stepStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
                 PrintString(tx + 60.0f, ry + 4.0f, aStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
                 PrintString(tx + 180.0f, ry + 4.0f, bStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
                 PrintString(tx + 300.0f, ry + 4.0f, tStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
                 PrintString(tx + 420.0f, ry + 4.0f, pStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
-                
+
                 int match = CountCorrectDigits(r.piVal);
                 float pr = 0.9f, pg = 0.2f, pb = 0.2f;
                 if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; }
                 else if (match > 0) { pr = 0.9f; pg = 0.7f; pb = 0.1f; }
                 PrintString(tx + 510.0f, ry + 4.0f, piStr, fontBaseBold, pr, pg, pb);
             }
-            
+
             float fy = 250.0f;
             PrintString(50.0f, fy, "Atualizacao Gauss-Legendre:", fontBaseBold, 0.8f, 0.8f, 0.9f);
             PrintString(50.0f, fy - 16.0f, "  a_{n+1} = (a_n + b_n) / 2", fontBaseRegular, 0.7f, 0.7f, 0.8f);
             PrintString(50.0f, fy - 32.0f, "  b_{n+1} = sqrt(a_n * b_n)", fontBaseRegular, 0.7f, 0.7f, 0.8f);
             PrintString(300.0f, fy - 16.0f, "  t_{n+1} = t_n - p_n * (a_n - a_{n+1})^2", fontBaseRegular, 0.7f, 0.7f, 0.8f);
             PrintString(300.0f, fy - 32.0f, "  p_{n+1} = 2 * p_n", fontBaseRegular, 0.7f, 0.7f, 0.8f);
-            
+
         } else if (activeAlgo == 5) {
             PrintString(50.0f, 690.0f, "Algoritmo de Chudnovsky (Mais Eficiente Disponivel)", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(50.0f, 670.0f, "Cada termo adiciona 14 digitos corretos de PI!", fontBaseRegular, 0.7f, 0.7f, 0.8f);
-            
+
             float tx = 40.0f;
             float ty = 600.0f;
             float tw = 700.0f;
-            
+
             DrawRect(tx, ty, tw, 28.0f, 0.35f, 0.15f, 0.15f);
             PrintString(tx + 10.0f, ty + 8.0f, "Termo (q)", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 90.0f, ty + 8.0f, "Multiplicador A_q", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 290.0f, ty + 8.0f, "Valor do Termo T_q", fontBaseBold, 1.0f, 1.0f, 1.0f);
             PrintString(tx + 510.0f, ty + 8.0f, "Estimativa de PI", fontBaseBold, 1.0f, 1.0f, 1.0f);
-            
+
             for (size_t i = 0; i < chudnovsky.rows.size() && i < 11; ++i) {
                 float ry = ty - 30.0f - i * 30.0f;
                 if (i % 2 == 0) {
@@ -1178,25 +1178,25 @@ void DrawGLScene() {
                 } else {
                     DrawRect(tx, ry - 4.0f, tw, 28.0f, 0.10f, 0.11f, 0.16f);
                 }
-                
+
                 char qStr[16], aStr[64], termStr[64], piStr[32];
                 const auto& r = chudnovsky.rows[i];
                 sprintf(qStr, "%d", r.termIndex);
                 sprintf(aStr, "%e", r.Aq);
                 sprintf(termStr, "%e", r.termVal);
                 sprintf(piStr, "%.15f", r.piVal);
-                
+
                 PrintString(tx + 10.0f, ry + 4.0f, qStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
                 PrintString(tx + 90.0f, ry + 4.0f, aStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
                 PrintString(tx + 290.0f, ry + 4.0f, termStr, fontBaseRegular, 0.8f, 0.8f, 0.9f);
-                
+
                 int match = CountCorrectDigits(r.piVal);
                 float pr = 0.9f, pg = 0.2f, pb = 0.2f;
                 if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; }
                 else if (match > 0) { pr = 0.9f; pg = 0.7f; pb = 0.1f; }
                 PrintString(tx + 510.0f, ry + 4.0f, piStr, fontBaseBold, pr, pg, pb);
             }
-            
+
             float fy = 250.0f;
             PrintString(50.0f, fy, "Formula de Chudnovsky:", fontBaseBold, 0.8f, 0.8f, 0.9f);
             PrintString(50.0f, fy - 16.0f, "  1/PI = 12 * Sum_{q=0}^{inf} T_q", fontBaseRegular, 0.7f, 0.7f, 0.8f);
@@ -1209,16 +1209,16 @@ void DrawGLScene() {
     float scrollY = 30.0f;
     float scrollW = 720.0f;
     float scrollH = 180.0f;
-    
+
     DrawRect(scrollX, scrollY, scrollW, scrollH, 0.07f, 0.08f, 0.12f);
     DrawRectOutline(scrollX, scrollY, scrollW, scrollH, 0.2f, 0.3f, 0.25f, 1.5f);
-    
+
     std::string currentBigPiStr = "";
     {
         std::lock_guard<std::mutex> lock(bigPiMutex);
         currentBigPiStr = bigPiResultStr;
     }
-    
+
     PrintString(scrollX + 15.0f, scrollY + scrollH - 18.0f, "Resultado do Calculo de Alta Precisao (Machin):", fontBaseBold, 0.4f, 0.9f, 0.5f);
     DrawMultilineText(scrollX + 15.0f, scrollY + 5.0f, scrollW - 30.0f, scrollH - 30.0f, currentBigPiStr, fontBaseRegular);
 
@@ -1232,7 +1232,7 @@ void DrawGLScene() {
 
 int main() {
     srand(static_cast<unsigned>(time(nullptr)));
-    
+
     if (!CreateGLWindow("Visualizacao do Calculo de PI", 1200, 800)) {
         printf("Falha ao criar janela OpenGL.\n");
         return 1;
@@ -1246,14 +1246,14 @@ int main() {
 
     while (true) {
         ProcessMessages();
-        
+
         // Espaco para pausar/iniciar simulacao padrao
         bool spacePressed = (GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
         if (spacePressed && !spaceKeyDown) {
             isRunning = !isRunning;
         }
         spaceKeyDown = spacePressed;
-        
+
         // H para alternar card de ajuda HUD
         bool hPressed = (GetAsyncKeyState('H') & 0x8000) != 0;
         if (hPressed && !hKeyDown) {
@@ -1263,7 +1263,7 @@ int main() {
 
         UpdateSimulation();
         DrawGLScene();
-        
+
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 
