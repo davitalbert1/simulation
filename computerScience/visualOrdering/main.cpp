@@ -38,7 +38,7 @@ static void BuildFonts() {
                                ANTIALIASED_QUALITY, FF_DONTCARE | DEFAULT_PITCH, "Segoe UI");
     HFONT oldFont = (HFONT)SelectObject(g_hdc, fontReg);
     wglUseFontBitmaps(g_hdc, 32, 96, fontBaseRegular);
-    
+
     fontBaseBold = glGenLists(96);
     HFONT fontBold = CreateFont(-13, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
                                 ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -91,24 +91,24 @@ static void DrawRectOutline(float x, float y, float w, float h, float r, float g
 
 static bool DrawButton(float x, float y, float w, float h, const char* label, bool active, int mx, int my, bool clicked) {
     bool hovered = (mx >= x && mx <= x + w && my >= y && my <= y + h);
-    
+
     float r = 0.12f, g = 0.14f, b = 0.22f;
     if (active) {
         r = 0.16f; g = 0.40f; b = 0.90f;
     } else if (hovered) {
         r = 0.20f; g = 0.23f; b = 0.35f;
     }
-    
+
     DrawRect(x, y, w, h, r, g, b, 0.85f);
     DrawRectOutline(x, y, w, h, 0.3f, 0.4f, 0.6f);
-    
+
     int labelLen = (int)std::strlen(label);
     float textW = labelLen * 7.0f;
     float tx = x + (w - textW) / 2.0f;
     float ty = y + (h - 10.0f) / 2.0f;
-    
+
     PrintString(tx, ty, label, fontBaseBold, 1.0f, 1.0f, 1.0f);
-    
+
     return hovered && clicked;
 }
 
@@ -117,18 +117,18 @@ static void DrawHelpCardHUD(float cx, float cy) {
     float h = 330.0f;
     float cardX = cx - w / 2.0f;
     float cardY = cy - h / 2.0f;
-    
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     DrawRect(cardX, cardY, w, h, 0.05f, 0.06f, 0.11f, 0.92f);
     DrawRectOutline(cardX, cardY, w, h, 0.3f, 0.6f, 0.9f, 2.0f);
     glDisable(GL_BLEND);
-    
+
     float tx = cardX + 20.0f;
     float ty = cardY + h - 30.0f;
     PrintString(tx + 60.0f, ty, "CONTROLES DE ORDENACAO", fontBaseLarge, 0.3f, 0.7f, 1.0f);
     ty -= 30.0f;
-    
+
     PrintString(tx, ty, "[ Executar Algoritmos ]", fontBaseBold, 0.9f, 0.9f, 1.0f);
     PrintString(tx + 15.0f, ty - 16.0f, "- B : Iniciar Bubble Sort.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     PrintString(tx + 15.0f, ty - 32.0f, "- S : Iniciar Selection Sort.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
@@ -136,12 +136,12 @@ static void DrawHelpCardHUD(float cx, float cy) {
     PrintString(tx + 15.0f, ty - 64.0f, "- Q : Iniciar Quick Sort.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     PrintString(tx + 15.0f, ty - 80.0f, "- M : Iniciar Merge Sort.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     ty -= 100.0f;
-    
+
     PrintString(tx, ty, "[ Ajustes e Acoes ]", fontBaseBold, 0.9f, 0.9f, 1.0f);
     PrintString(tx + 15.0f, ty - 16.0f, "- R : Embaralhar os elementos.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     PrintString(tx + 15.0f, ty - 32.0f, "- Setas UP / DOWN : Modificar atraso / velocidade.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
     ty -= 50.0f;
-    
+
     PrintString(tx, ty, "[ Atalhos ]", fontBaseBold, 0.9f, 0.9f, 1.0f);
     PrintString(tx + 15.0f, ty - 16.0f, "- H : Ocultar / Mostrar este painel de ajuda.", fontBaseRegular, 0.8f, 0.8f, 0.9f);
 }
@@ -242,12 +242,12 @@ void quickSortHelper(int low, int high) {
     if (low < high) {
         int pi = partition(low, high);
         if (pi == -1 || stopSorting.load()) return;
-        
+
         quickSortHelper(low, pi - 1);
         if (stopSorting.load()) return;
-        
+
         isSorted[pi] = true;
-        
+
         quickSortHelper(pi + 1, high);
     } else if (low == high) {
         isSorted[low] = true;
@@ -332,9 +332,9 @@ void runSort(void (*sortFunc)()) {
 void startSortingThread(void (*sortFunc)(), const char* name) {
     stopSorting.store(true);
     if (sortThread.joinable()) sortThread.join();
-    
+
     for (int i = 0; i < NUM_ELEMENTS; ++i) isSorted[i] = false;
-    
+
     stopSorting.store(false);
     currentAlgoName = name;
     sortThread = std::thread(runSort, sortFunc);
@@ -343,7 +343,7 @@ void startSortingThread(void (*sortFunc)(), const char* name) {
 void shuffleArray() {
     stopSorting.store(true);
     if (sortThread.joinable()) sortThread.join();
-    
+
     currentAlgoName = "Nenhum (Pressione B, S, I, Q, M para iniciar)";
     for (int i = 0; i < NUM_ELEMENTS; ++i) {
         arr[i] = i + 1;
@@ -524,7 +524,7 @@ int main() {
         SetWindowText(g_hwnd, titleBuffer);
 
         SwapBuffers(g_hdc);
-        
+
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 
