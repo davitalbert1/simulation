@@ -1,4 +1,4 @@
-# Git Cheatsheet - Engine
+# Git Cheatsheet - Simulation
 
 ## Setup Inicial do Repositório
 
@@ -11,7 +11,7 @@ git init
 ### Adicionar repositório remoto
 
 ```bash
-git remote add origin https://github.com/davitalbert1/engine.git
+git remote add origin https://github.com/davitalbert1/simulation.git
 ```
 
 ### Verificar remoto
@@ -61,7 +61,7 @@ Hi davitalbert1! You've successfully authenticated, but GitHub does not provide 
 ## Alterar repositório para SSH
 
 ```bash
-git remote set-url origin git@github.com:davitalbert1/engine.git
+git remote set-url origin git@github.com:davitalbert1/simulation.git
 ```
 
 ## Confirmar alteração
@@ -73,8 +73,8 @@ git remote -v
 Resultado esperado:
 
 ```text
-origin  git@github.com:davitalbert1/engine.git (fetch)
-origin  git@github.com:davitalbert1/engine.git (push)
+origin  git@github.com:davitalbert1/simulation.git (fetch)
+origin  git@github.com:davitalbert1/simulation.git (push)
 ```
 
 ---
