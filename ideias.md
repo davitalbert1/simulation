@@ -1,3 +1,11 @@
+### prompts:
+
+```bash
+verifique o padrão de outros códigos e faça na mesma estrutura, garanta que esteja 100% funcional.
+```
+
+---
+
 # Lista de Tópicos para Simulações e Visualizações
 
 ## Ciência da Computação
@@ -144,8 +152,8 @@
 - Movimento de partículas carregadas
 
 ### Óptica
-- Reflexão em espelhos
-- Refração em lentes
+- Reflexão em espelhos (feito)
+- Refração em lentes (feito)
 - Formação de arco-íris
 - Interferência de ondas
 - Difração

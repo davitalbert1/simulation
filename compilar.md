@@ -8,20 +8,52 @@
 
 ## Executar
 
-### Sistema Solar
+### física
+
+#### Sistema Solar
 
 ```bash
 ./physics/system/solar.exe
 ```
 
-### Buraco Negro
+#### Objeto estelar
+
+```bash
+./physics/starLifecycle/star_lifecycle.exe
+```
+
+#### Buraco Negro
 
 ```bash
 ./physics/blackHole/blackHole.exe
 ```
 
-### Ordenação Visual
+#### Objeto estelar
+
+```bash
+./physics/optics/optics_sim.exe
+```
+
+### ciência da computação
+
+#### Ordenação Visual
 
 ```bash
 ./computerScience/visualOrdering/visual_ordering.exe
+```
+
+### biologia
+
+#### evolution
+
+```bash
+./biology/evolution/evolution_sim.exe
+```
+
+### matemática
+
+#### PI
+
+```bash
+./math/PI/pi_simulation.exe
 ```
