@@ -6,9 +6,9 @@ HDC g_hdc;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
@@ -25,7 +25,7 @@ bool CreateGLWindow(const char* title, int width, int height) {
         0,
         "GLWindow",
         title,
-        WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX, // Fixed size window
+        WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX,
         CW_USEDEFAULT, 
         CW_USEDEFAULT,
         width, 
@@ -72,3 +72,4 @@ void ProcessMessages() {
         DispatchMessage(&msg);
     }
 }
+
