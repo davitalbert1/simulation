@@ -1,0 +1,55 @@
+@echo off
+setlocal
+
+set "EXE_NAME=HashDB.exe"
+
+rem Verifica se o argumento e "clean" para deletar o executavel
+if "%~1"=="clean" (
+    if exist "%EXE_NAME%" (
+        del "%EXE_NAME%"
+        echo %EXE_NAME% deletado.
+    ) else (
+        echo %EXE_NAME% nao encontrado.
+    )
+    exit /b 0
+)
+
+rem Adiciona o caminho do compilador MinGW caso nao esteja no PATH
+where g++ >nul 2>&1
+if %errorlevel% neq 0 (
+    if exist "C:\msys64\mingw64\bin" (
+        set "PATH=C:\msys64\mingw64\bin;%PATH%"
+    ) else if exist "D:\msys64\mingw64\bin" (
+        set "PATH=D:\msys64\mingw64\bin;%PATH%"
+    )
+)
+
+rem Verifica se o executavel ja existe
+if exist "%EXE_NAME%" (
+    rem Compara datas usando PowerShell para ver se algum arquivo fonte e mais novo que o executavel
+    powershell -Command "$exe='%EXE_NAME%'; $exeTime=(Get-Item $exe).LastWriteTime; if (Get-ChildItem -Path * -Include *.cpp,*.h | Where-Object { $_.LastWriteTime -gt $exeTime }) { exit 1 } else { exit 0 }"
+
+    if %errorlevel% == 0 (
+        echo.
+        echo O executavel %EXE_NAME% ja esta atualizado. Pulando.
+        exit /b 0
+    )
+)
+
+echo.
+echo Compilando %EXE_NAME%...
+
+g++ main.cpp Window.cpp Hash.cpp Database.cpp ^
+-o %EXE_NAME% ^
+-mwindows -std=c++17
+
+if %errorlevel% == 0 (
+    echo.
+    echo Concluido com sucesso!
+    echo Executavel criado: %EXE_NAME%
+) else (
+    echo.
+    echo Concluido com erro.
+)
+
+exit /b %errorlevel%

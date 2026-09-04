@@ -3,6 +3,17 @@ setlocal
 
 set "EXE_NAME=star_lifecycle.exe"
 
+rem Verifica se o argumento e "clean" para deletar o executavel
+if "%~1"=="clean" (
+    if exist "%EXE_NAME%" (
+        del "%EXE_NAME%"
+        echo %EXE_NAME% deletado.
+    ) else (
+        echo %EXE_NAME% nao encontrado.
+    )
+    exit /b 0
+)
+
 where g++ >nul 2>&1
 if %errorlevel% neq 0 (
     if exist "C:\msys64\mingw64\bin" (

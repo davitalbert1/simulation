@@ -85,9 +85,13 @@ static bool DrawButton(float x, float y, float w, float h, const char* label, bo
 
     float r = 0.12f, g = 0.14f, b = 0.22f;
     if (active) {
-        r = 0.16f; g = 0.40f; b = 0.90f;
+        r = 0.16f;
+        g = 0.40f;
+        b = 0.90f;
     } else if (hovered) {
-        r = 0.20f; g = 0.23f; b = 0.35f;
+        r = 0.20f;
+        g = 0.23f;
+        b = 0.35f;
     }
 
     DrawRect(x, y, w, h, r, g, b, 0.85f);

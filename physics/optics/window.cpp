@@ -26,13 +26,13 @@ bool CreateGLWindow(const char* title, int width, int height) {
         "GLWindow",
         title,
         WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX,
-        CW_USEDEFAULT, 
         CW_USEDEFAULT,
-        width, 
+        CW_USEDEFAULT,
+        width,
         height,
-        NULL, 
         NULL,
-        wc.hInstance, 
+        NULL,
+        wc.hInstance,
         NULL
     );
 

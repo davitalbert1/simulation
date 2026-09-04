@@ -8,82 +8,82 @@
 extern Camera camera;
 
 namespace {
-void DrawGroundPlane() {
-    glColor3f(0.15f, 0.20f, 0.25f);
-    glBegin(GL_LINES);
-    for (float i = -50.0f; i <= 50.0f; i += 5.0f) {
-        glVertex3f(i, 0.0f, -50.0f);
-        glVertex3f(i, 0.0f, 50.0f);
-        glVertex3f(-50.0f, 0.0f, i);
-        glVertex3f(50.0f, 0.0f, i);
+    void DrawGroundPlane() {
+        glColor3f(0.15f, 0.20f, 0.25f);
+        glBegin(GL_LINES);
+        for (float i = -50.0f; i <= 50.0f; i += 5.0f) {
+            glVertex3f(i, 0.0f, -50.0f);
+            glVertex3f(i, 0.0f, 50.0f);
+            glVertex3f(-50.0f, 0.0f, i);
+            glVertex3f(50.0f, 0.0f, i);
+        }
+        glEnd();
+
+        glColor3f(0.25f, 0.30f, 0.35f);
+        glBegin(GL_QUADS);
+        glVertex3f(-50.0f, -0.05f, -50.0f);
+        glVertex3f(50.0f, -0.05f, -50.0f);
+        glVertex3f(50.0f, -0.05f, 50.0f);
+        glVertex3f(-50.0f, -0.05f, 50.0f);
+        glEnd();
     }
-    glEnd();
 
-    glColor3f(0.25f, 0.30f, 0.35f);
-    glBegin(GL_QUADS);
-    glVertex3f(-50.0f, -0.05f, -50.0f);
-    glVertex3f(50.0f, -0.05f, -50.0f);
-    glVertex3f(50.0f, -0.05f, 50.0f);
-    glVertex3f(-50.0f, -0.05f, 50.0f);
-    glEnd();
-}
+    void DrawFood(const Food& food) {
+        glPushMatrix();
+        glTranslatef(food.x, 0.9f, food.z);
+        glColor3f(0.2f, 0.85f, 0.2f);
 
-void DrawFood(const Food& food) {
-    glPushMatrix();
-    glTranslatef(food.x, 0.9f, food.z);
-    glColor3f(0.2f, 0.85f, 0.2f);
+        glBegin(GL_QUADS);
+        glVertex3f(0.0f, 1.0f, 0.0f);
+        glVertex3f(1.0f, 0.0f, 0.0f);
+        glVertex3f(0.0f, -1.0f, 0.0f);
+        glVertex3f(-1.0f, 0.0f, 0.0f);
+        glVertex3f(0.0f, 0.0f, 1.0f);
+        glVertex3f(0.0f, 0.0f, -1.0f);
+        glEnd();
 
-    glBegin(GL_QUADS);
-    glVertex3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, -1.0f, 0.0f);
-    glVertex3f(-1.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, -1.0f);
-    glEnd();
+        glPopMatrix();
+    }
 
-    glPopMatrix();
-}
+    void DrawCritter(const Critter& critter) {
+        glPushMatrix();
+        glTranslatef(critter.x, 0.8f, critter.z);
+        glColor3f(critter.genes.r, critter.genes.g, critter.genes.b);
 
-void DrawCritter(const Critter& critter) {
-    glPushMatrix();
-    glTranslatef(critter.x, 0.8f, critter.z);
-    glColor3f(critter.genes.r, critter.genes.g, critter.genes.b);
+        glBegin(GL_QUADS);
+        glVertex3f(-0.8f, -0.8f, 0.8f);
+        glVertex3f(0.8f, -0.8f, 0.8f);
+        glVertex3f(0.8f, 0.8f, 0.8f);
+        glVertex3f(-0.8f, 0.8f, 0.8f);
 
-    glBegin(GL_QUADS);
-    glVertex3f(-0.8f, -0.8f, 0.8f);
-    glVertex3f(0.8f, -0.8f, 0.8f);
-    glVertex3f(0.8f, 0.8f, 0.8f);
-    glVertex3f(-0.8f, 0.8f, 0.8f);
+        glVertex3f(-0.8f, -0.8f, -0.8f);
+        glVertex3f(-0.8f, 0.8f, -0.8f);
+        glVertex3f(0.8f, 0.8f, -0.8f);
+        glVertex3f(0.8f, -0.8f, -0.8f);
 
-    glVertex3f(-0.8f, -0.8f, -0.8f);
-    glVertex3f(-0.8f, 0.8f, -0.8f);
-    glVertex3f(0.8f, 0.8f, -0.8f);
-    glVertex3f(0.8f, -0.8f, -0.8f);
+        glVertex3f(-0.8f, 0.8f, -0.8f);
+        glVertex3f(-0.8f, 0.8f, 0.8f);
+        glVertex3f(0.8f, 0.8f, 0.8f);
+        glVertex3f(0.8f, 0.8f, -0.8f);
 
-    glVertex3f(-0.8f, 0.8f, -0.8f);
-    glVertex3f(-0.8f, 0.8f, 0.8f);
-    glVertex3f(0.8f, 0.8f, 0.8f);
-    glVertex3f(0.8f, 0.8f, -0.8f);
+        glVertex3f(-0.8f, -0.8f, -0.8f);
+        glVertex3f(0.8f, -0.8f, -0.8f);
+        glVertex3f(0.8f, -0.8f, 0.8f);
+        glVertex3f(-0.8f, -0.8f, 0.8f);
 
-    glVertex3f(-0.8f, -0.8f, -0.8f);
-    glVertex3f(0.8f, -0.8f, -0.8f);
-    glVertex3f(0.8f, -0.8f, 0.8f);
-    glVertex3f(-0.8f, -0.8f, 0.8f);
+        glVertex3f(0.8f, -0.8f, -0.8f);
+        glVertex3f(0.8f, 0.8f, -0.8f);
+        glVertex3f(0.8f, 0.8f, 0.8f);
+        glVertex3f(0.8f, -0.8f, 0.8f);
 
-    glVertex3f(0.8f, -0.8f, -0.8f);
-    glVertex3f(0.8f, 0.8f, -0.8f);
-    glVertex3f(0.8f, 0.8f, 0.8f);
-    glVertex3f(0.8f, -0.8f, 0.8f);
+        glVertex3f(-0.8f, -0.8f, -0.8f);
+        glVertex3f(-0.8f, -0.8f, 0.8f);
+        glVertex3f(-0.8f, 0.8f, 0.8f);
+        glVertex3f(-0.8f, 0.8f, -0.8f);
+        glEnd();
 
-    glVertex3f(-0.8f, -0.8f, -0.8f);
-    glVertex3f(-0.8f, -0.8f, 0.8f);
-    glVertex3f(-0.8f, 0.8f, 0.8f);
-    glVertex3f(-0.8f, 0.8f, -0.8f);
-    glEnd();
-
-    glPopMatrix();
-}
+        glPopMatrix();
+    }
 }
 
 void InitRender() {
@@ -112,11 +112,6 @@ void DrawGLScene() {
 
     DrawGroundPlane();
 
-    for (const auto& food : foods) {
-        DrawFood(food);
-    }
-
-    for (const auto& critter : critters) {
-        DrawCritter(critter);
-    }
+    for (const auto& food : foods) DrawFood(food);
+    for (const auto& critter : critters) DrawCritter(critter);
 }

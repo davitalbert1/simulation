@@ -2,11 +2,11 @@
 
 Coleção de simulações interativas de leis da física, biologia, ciência da computação e matemática.
 
-## 📋 Sobre o Projeto
+## Sobre o Projeto
 
 Este projeto contém diversas simulações visuais desenvolvidas para demonstrar conceitos científicos e matemáticos de forma interativa. As simulações são construídas utilizando a biblioteca **Dear ImGui** para renderização de interface gráfica.
 
-## 🎯 Simulações Disponíveis
+## Simulações Disponíveis
 
 ### Física
 - **Sistema Solar** - Simulação do sistema solar com corpos celestes
@@ -19,11 +19,12 @@ Este projeto contém diversas simulações visuais desenvolvidas para demonstrar
 
 ### Ciência da Computação
 - **Ordenação Visual** - Visualização de algoritmos de ordenação
+- **Hash** - Simula a geração e ultilização de hash em banco de dados
 
 ### Matemática
 - **PI** - Simulação e cálculo de Pi
 
-## 🛠️ Requisitos
+## Requisitos
 
 - **Dear ImGui** - Biblioteca para interface gráfica
 - Compilador C++ compatível com Windows
@@ -39,7 +40,7 @@ Para compilar todas as simulações de uma vez:
 
 Este script irá percorrer todos os diretórios e executar os arquivos `build.bat` encontrados.
 
-## ▶️ Execução
+## Execução
 
 Após a compilação, execute as simulações desejadas:
 
@@ -86,7 +87,7 @@ Após a compilação, execute as simulações desejadas:
 ./math/PI/pi_simulation.exe
 ```
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 simulation/
@@ -106,7 +107,7 @@ simulation/
 └── ideias.md               # Ideias futuras e roadmap
 ```
 
-## 💡 Ideias Futuras
+## Ideias Futuras
 
 O projeto possui um roadmap extenso com ideias para futuras implementações:
 
@@ -135,16 +136,16 @@ O projeto possui um roadmap extenso com ideias para futuras implementações:
 
 Consulte o arquivo [ideias.md](ideias.md) para a lista completa de ideias planejadas.
 
-## 📝 Documentação Adicional
+## Documentação Adicional
 
 - [Compilar.md](compilar.md) - Guia detalhado de compilação e execução
 - [Ideias.md](ideias.md) - Lista completa de tópicos e simulações planejadas
 
-## 📄 Licença
+## Licença
 
 Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## 🤝 Contribuindo
+## Contribuindo
 
 Contribuições são bem-vindas! Sinta-se à vontade para adicionar novas simulações seguindo a estrutura existente do projeto.
 

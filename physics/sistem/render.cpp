@@ -8,6 +8,9 @@
 #include <functional>
 #include <algorithm>
 #include <GL/glu.h>
+#include <string>
+#include <cstdio>
+#include <cstring>
 
 std::vector<Planet> planets;
 std::vector<Sun> suns;
@@ -33,7 +36,7 @@ static const TerrainBand rockyBands[] = {
     {0.45f, {194, 178, 128}}, // praia
     {0.70f, {50, 140, 60}}, // vegetação
     {0.85f, {100, 100, 100}}, // montanha
-    {1.00f, {240, 240, 240}}  // neve
+    {1.00f, {240, 240, 240}} // neve
 };
 
 // método de Newton–Raphson: 𝐸𝑛+1 = (𝐸𝑛−𝐸𝑛−𝑒sin⁡(𝐸𝑛)−𝑀)/(1−𝑒cos⁡(𝐸𝑛))
@@ -1191,13 +1194,7 @@ void DrawSolarSystem(float time) {
     glPopMatrix();
 }
 
-// =======================================================
 // SERIALIZAÇÃO E PARSING DE JSON PARA O SISTEMA ESTELAR
-// =======================================================
-#include <string>
-#include <cstdio>
-#include <cstring>
-
 struct JsonVal {
     enum Type { NIL, NUM, STR, BOOL, OBJ, ARR };
     Type type = NIL;

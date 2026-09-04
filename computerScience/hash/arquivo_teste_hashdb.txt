@@ -1,0 +1,13 @@
+HASHDB - ARQUIVO DE TESTE
+=========================
+
+Nome: Joao da Silva
+Curso: Engenharia de Software
+Disciplina: Estruturas de Dados
+
+Notas:
+- Algoritmos: 9.5
+- Programacao C++: 10.0
+- Banco de Dados: 8.5
+
+Este arquivo foi criado para testar o sistema educacional de hashing.
