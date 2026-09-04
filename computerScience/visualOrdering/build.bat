@@ -3,6 +3,17 @@ setlocal
 
 set "EXE_NAME=visual_ordering.exe"
 
+rem Verifica se o argumento e "clean" para deletar o executavel
+if "%~1"=="clean" (
+    if exist "%EXE_NAME%" (
+        del "%EXE_NAME%"
+        echo %EXE_NAME% deletado.
+    ) else (
+        echo %EXE_NAME% nao encontrado.
+    )
+    exit /b 0
+)
+
 rem Adiciona o caminho do compilador MinGW caso nao esteja no PATH
 where g++ >nul 2>&1
 if %errorlevel% neq 0 (

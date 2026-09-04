@@ -8,9 +8,9 @@ static HGLRC g_glrc = nullptr;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;
     }
 
     return DefWindowProc(hWnd, msg, wParam, lParam);

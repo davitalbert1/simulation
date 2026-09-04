@@ -1,34 +1,33 @@
 #include "simulation.h"
-
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <limits>
 
 namespace {
-constexpr float WORLD_HALF_SIZE = 50.0f;
-constexpr float MAX_CRITTERS = 200.0f;
-constexpr float MAX_FOOD = 80.0f;
-constexpr float FOOD_REGEN_INTERVAL = 1.5f;
+    constexpr float WORLD_HALF_SIZE = 50.0f;
+    constexpr float MAX_CRITTERS = 200.0f;
+    constexpr float MAX_FOOD = 80.0f;
+    constexpr float FOOD_REGEN_INTERVAL = 1.5f;
 
-float RandomRange(float minValue, float maxValue) {
-    return minValue + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (maxValue - minValue);
-}
-
-float Clamp(float value, float minValue, float maxValue) {
-    return std::max(minValue, std::min(maxValue, value));
-}
-
-void NormalizeDirection(float& x, float& z) {
-    float length = std::sqrt(x * x + z * z);
-    if (length > 0.0001f) {
-        x /= length;
-        z /= length;
-    } else {
-        x = 1.0f;
-        z = 0.0f;
+    float RandomRange(float minValue, float maxValue) {
+        return minValue + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (maxValue - minValue);
     }
-}
+
+    float Clamp(float value, float minValue, float maxValue) {
+        return std::max(minValue, std::min(maxValue, value));
+    }
+
+    void NormalizeDirection(float& x, float& z) {
+        float length = std::sqrt(x * x + z * z);
+        if (length > 0.0001f) {
+            x /= length;
+            z /= length;
+        } else {
+            x = 1.0f;
+            z = 0.0f;
+        }
+    }
 }
 
 std::vector<Critter> critters;
@@ -69,9 +68,7 @@ void ResetSimulation() {
 }
 
 void UpdateSimulation(float deltaTime) {
-    if (deltaTime <= 0.0f) {
-        return;
-    }
+    if (deltaTime <= 0.0f) return;
 
     static float foodTimer = FOOD_REGEN_INTERVAL;
     foodTimer -= deltaTime;

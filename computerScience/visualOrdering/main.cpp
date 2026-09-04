@@ -94,9 +94,13 @@ static bool DrawButton(float x, float y, float w, float h, const char* label, bo
 
     float r = 0.12f, g = 0.14f, b = 0.22f;
     if (active) {
-        r = 0.16f; g = 0.40f; b = 0.90f;
+        r = 0.16f;
+        g = 0.40f;
+        b = 0.90f;
     } else if (hovered) {
-        r = 0.20f; g = 0.23f; b = 0.35f;
+        r = 0.20f;
+        g = 0.23f;
+        b = 0.35f;
     }
 
     DrawRect(x, y, w, h, r, g, b, 0.85f);
@@ -495,7 +499,7 @@ int main() {
             glEnd();
         }
 
-        // --- RENDERIZAR INTERFACE HUD (2D ORTOGRÁFICA) ---
+        // RENDERIZAR INTERFACE HUD (2D ORTOGRÁFICA)
         POINT mousePos;
         GetCursorPos(&mousePos);
         ScreenToClient(g_hwnd, &mousePos);
@@ -512,14 +516,11 @@ int main() {
             showHelpCard = !showHelpCard;
         }
 
-        if (showHelpCard) {
-            DrawHelpCardHUD(400.0f, 300.0f);
-        }
-        // -------------------------------------------------
+        if (showHelpCard) DrawHelpCardHUD(400.0f, 300.0f);
 
         // Atualizar barra de título da janela
         char titleBuffer[256];
-        sprintf(titleBuffer, "Ordenacao Visual - [%s] [Atraso: %d ms] - B: Bubble, S: Selection, I: Insertion, Q: Quick, M: Merge, R: Shuffle, UP/DOWN: Atraso", 
+        sprintf(titleBuffer, "Ordenacao Visual - [%s] [Atraso: %d ms] - B: Bubble, S: Selection, I: Insertion, Q: Quick, M: Merge, R: Shuffle, UP/DOWN: Atraso",
                 currentAlgoName, delayMs.load());
         SetWindowText(g_hwnd, titleBuffer);
 

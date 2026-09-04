@@ -330,9 +330,7 @@ int main() {
 
         // Tecla H para ajuda
         bool hPressed = (GetAsyncKeyState('H') & 0x8000) != 0;
-        if (hPressed && !hKeyDown) {
-            showHelpCard = !showHelpCard;
-        }
+        if (hPressed && !hKeyDown) showHelpCard = !showHelpCard;
         hKeyDown = hPressed;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

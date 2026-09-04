@@ -395,9 +395,7 @@ struct ChudnovskySolver {
     }
 };
 
-// ==========================================
 // ESTRUTURAS PARA CÁLCULO DE ALTA PRECISÃO (MACHIN)
-// ==========================================
 std::mutex bigPiMutex;
 std::string bigPiResultStr = "Nenhum calculo iniciado.";
 std::atomic<bool> bigPiRunning{false};
@@ -544,8 +542,10 @@ void BigPiWorker(int requestedDigits, int saveInterval) {
             piVal.sub(t5_calc);
         }
 
-        term5.div(5); term5.div(5);
-        term239.div(239); term239.div(239);
+        term5.div(5);
+        term5.div(5);
+        term239.div(239);
+        term239.div(239);
 
         bigPiIterations.store(k);
 
@@ -896,7 +896,7 @@ void DrawGLScene() {
     float speedY = 180.0f;
     PrintString(800, speedY + 20, "Velocidade de Iteracao (Leibniz/MC):", fontBaseBold, 0.8f, 0.8f, 0.9f);
     char speedText[32];
-    sprintf(speedText, "Nivel: %d (%d iter/frame)", speedLevel, 
+    sprintf(speedText, "Nivel: %d (%d iter/frame)", speedLevel,
             (speedLevel==1?1:(speedLevel==2?10:(speedLevel==3?100:(speedLevel==4?1000:10000)))));
     PrintString(800, speedY, speedText, fontBaseRegular, 0.7f, 0.7f, 0.8f);
 
@@ -908,9 +908,7 @@ void DrawGLScene() {
         }
     }
 
-    // ==========================================
     // UI MENU LATERAL - CONTROLES ALTA PRECISÃO (MACHIN)
-    // ==========================================
     float bigPiY = 95.0f;
     PrintString(800, bigPiY + 20, "Calculo de Alta Precisao (Machin):", fontBaseBold, 0.8f, 0.8f, 0.9f);
 
@@ -938,18 +936,30 @@ void DrawGLScene() {
         }
     }
     PrintString(800, bigPiY - 50, bigPiStatus, fontBaseRegular, 0.2f, 0.8f, 0.3f);
-    // ==========================================
 
     double currentVal = 0.0;
     long long currentSteps = 0;
     int correctDigits = 0;
 
-    if (activeAlgo == 0) { currentVal = leibniz.value; currentSteps = leibniz.k; }
-    else if (activeAlgo == 1) { currentVal = nilakantha.value; currentSteps = nilakantha.k; }
-    else if (activeAlgo == 2) { currentVal = monteCarlo.value; currentSteps = monteCarlo.totalPoints; }
-    else if (activeAlgo == 3) { currentVal = archimedes.value; currentSteps = archimedes.sides; }
-    else if (activeAlgo == 4) { currentVal = gaussLegendre.value; currentSteps = gaussLegendre.iteration; }
-    else if (activeAlgo == 5) { currentVal = chudnovsky.value; currentSteps = chudnovsky.q; }
+    if (activeAlgo == 0) {
+        currentVal = leibniz.value;
+        currentSteps = leibniz.k;
+    } else if (activeAlgo == 1) {
+        currentVal = nilakantha.value;
+        currentSteps = nilakantha.k;
+    } else if (activeAlgo == 2) {
+        currentVal = monteCarlo.value;
+        currentSteps = monteCarlo.totalPoints;
+    } else if (activeAlgo == 3) {
+        currentVal = archimedes.value;
+        currentSteps = archimedes.sides;
+    } else if (activeAlgo == 4) {
+        currentVal = gaussLegendre.value;
+        currentSteps = gaussLegendre.iteration;
+    } else if (activeAlgo == 5) {
+        currentVal = chudnovsky.value;
+        currentSteps = chudnovsky.q;
+    }
 
     correctDigits = CountCorrectDigits(currentVal);
 
@@ -1145,8 +1155,16 @@ void DrawGLScene() {
 
                 int match = CountCorrectDigits(r.piVal);
                 float pr = 0.9f, pg = 0.2f, pb = 0.2f;
-                if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; }
-                else if (match > 0) { pr = 0.9f; pg = 0.7f; pb = 0.1f; }
+                if (match >= 15) {
+                    pr = 0.2f;
+                    pg = 0.8f;
+                    pb = 0.2f;
+                }
+                else if (match > 0) {
+                    pr = 0.9f;
+                    pg = 0.7f;
+                    pb = 0.1f;
+                }
                 PrintString(tx + 510.0f, ry + 4.0f, piStr, fontBaseBold, pr, pg, pb);
             }
 
@@ -1192,8 +1210,15 @@ void DrawGLScene() {
 
                 int match = CountCorrectDigits(r.piVal);
                 float pr = 0.9f, pg = 0.2f, pb = 0.2f;
-                if (match >= 15) { pr = 0.2f; pg = 0.8f; pb = 0.2f; }
-                else if (match > 0) { pr = 0.9f; pg = 0.7f; pb = 0.1f; }
+                if (match >= 15) {
+                    pr = 0.2f;
+                    pg = 0.8f;
+                    pb = 0.2f;
+                } else if (match > 0) {
+                    pr = 0.9f;
+                    pg = 0.7f;
+                    pb = 0.1f;
+                }
                 PrintString(tx + 510.0f, ry + 4.0f, piStr, fontBaseBold, pr, pg, pb);
             }
 

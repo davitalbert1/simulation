@@ -41,7 +41,6 @@ int main() {
         if (GetAsyncKeyState(VK_DOWN) & 0x8000) camera.distance += 0.5f;
         if (camera.distance < 1.0f) camera.distance = 1.0f;
 
-
         // Teclas de Controle
         if (GetAsyncKeyState('R')) {
             if (!rKeyDown) {

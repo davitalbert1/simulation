@@ -313,9 +313,19 @@ void SpawnNebulaParticles(float cx, float cy, float radius) {
         p.vy = (cy - py) * 0.15f + ((float)rand() / RAND_MAX * 10.0f - 5.0f);
 
         int choice = rand() % 3;
-        if (choice == 0) { p.r = 0.9f; p.g = 0.2f; p.b = 0.6f; }
-        else if (choice == 1) { p.r = 0.5f; p.g = 0.1f; p.b = 0.8f; }
-        else { p.r = 0.2f; p.g = 0.7f; p.b = 0.9f; }
+        if (choice == 0) {
+            p.r = 0.9f;
+            p.g = 0.2f;
+            p.b = 0.6f;
+        } else if (choice == 1) {
+            p.r = 0.5f;
+            p.g = 0.1f;
+            p.b = 0.8f;
+        } else {
+            p.r = 0.2f;
+            p.g = 0.7f;
+            p.b = 0.9f;
+        }
 
         p.a = 0.3f;
         p.size = 15.0f + (float)rand() / RAND_MAX * 15.0f;
@@ -342,9 +352,19 @@ void SpawnPlanetaryNebulaParticles(float cx, float cy, float innerRad) {
         p.vy = speed * sinf(angle);
 
         int choice = rand() % 3;
-        if (choice == 0) { p.r = 1.0f; p.g = 0.4f; p.b = 0.1f; }
-        else if (choice == 1) { p.r = 0.2f; p.g = 0.8f; p.b = 0.3f; }
-        else { p.r = 0.1f; p.g = 0.7f; p.b = 0.9f; }
+        if (choice == 0) {
+            p.r = 1.0f;
+            p.g = 0.4f;
+            p.b = 0.1f;
+        } else if (choice == 1) {
+            p.r = 0.2f;
+            p.g = 0.8f;
+            p.b = 0.3f;
+        } else {
+            p.r = 0.1f;
+            p.g = 0.7f;
+            p.b = 0.9f;
+        }
 
         p.a = 0.6f;
         p.size = 6.0f + (float)rand() / RAND_MAX * 10.0f;
@@ -369,9 +389,19 @@ void SpawnSupernovaParticles(float cx, float cy) {
         p.vy = speed * sinf(angle);
 
         int choice = rand() % 3;
-        if (choice == 0) { p.r = 1.0f; p.g = 1.0f; p.b = 1.0f; }
-        else if (choice == 1) { p.r = 1.0f; p.g = 0.9f; p.b = 0.2f; }
-        else { p.r = 1.0f; p.g = 0.5f; p.b = 0.1f; }
+        if (choice == 0) {
+            p.r = 1.0f;
+            p.g = 1.0f;
+            p.b = 1.0f;
+        } else if (choice == 1) {
+            p.r = 1.0f;
+            p.g = 0.9f;
+            p.b = 0.2f;
+        } else {
+            p.r = 1.0f;
+            p.g = 0.5f;
+            p.b = 0.1f;
+        }
 
         p.a = 0.8f;
         p.size = 8.0f + (float)rand() / RAND_MAX * 8.0f;
@@ -397,9 +427,19 @@ void SpawnBlackHoleDiskParticles(float cx, float cy, float radius) {
         p.vy = orbSpeed * cosf(angle) - (dist * 0.05f) * sinf(angle);
 
         int choice = rand() % 3;
-        if (choice == 0) { p.r = 1.0f; p.g = 0.3f; p.b = 0.1f; }
-        else if (choice == 1) { p.r = 0.9f; p.g = 0.5f; p.b = 0.1f; }
-        else { p.r = 1.0f; p.g = 0.8f; p.b = 0.2f; }
+        if (choice == 0) {
+            p.r = 1.0f;
+            p.g = 0.3f;
+            p.b = 0.1f;
+        } else if (choice == 1) {
+            p.r = 0.9f;
+            p.g = 0.5f;
+            p.b = 0.1f;
+        } else {
+            p.r = 1.0f;
+            p.g = 0.8f;
+            p.b = 0.2f;
+        }
 
         p.a = 0.5f;
         p.size = 2.0f + (float)rand() / RAND_MAX * 4.0f;
@@ -533,7 +573,7 @@ void DrawHRDiagram(float x, float y, float w, float h, StarState current) {
     glColor4f(0.18f, 0.25f, 0.40f, 0.35f);
     glBegin(GL_QUAD_STRIP);
     double msTemps[] = { 40000.0, 25000.0, 15000.0, 10000.0, 7500.0, 6000.0, 5000.0, 4000.0, 3000.0, 2000.0 };
-    double msLums[] =  { 1e5,     1e4,     800.0,   40.0,    5.0,     1.0,     0.25,    0.04,    4e-3,   1e-4 };
+    double msLums[] =  { 1e5, 1e4, 800.0, 40.0, 5.0, 1.0, 0.25, 0.04, 4e-3,1e-4 };
 
     double minLogT = log10(2000.0);
     double maxLogT = log10(40000.0);
@@ -606,9 +646,13 @@ bool DrawButton(float x, float y, float w, float h, const char* label, bool acti
 
     float r = 0.12f, g = 0.14f, b = 0.22f;
     if (active) {
-        r = 0.16f; g = 0.40f; b = 0.90f;
+        r = 0.16f;
+        g = 0.40f;
+        b = 0.90f;
     } else if (hovered) {
-        r = 0.20f; g = 0.23f; b = 0.35f;
+        r = 0.20f;
+        g = 0.23f;
+        b = 0.35f;
     }
 
     DrawRect(x, y, w, h, r, g, b);
@@ -647,9 +691,13 @@ void DrawStellarVisualizer(float cx, float cy, StarState s) {
 
         float rColor = 1.0f, gColor = 0.9f, bColor = 0.2f;
         if (initialMass < 0.8) {
-            rColor = 0.9f; gColor = 0.2f; bColor = 0.1f;
+            rColor = 0.9f;
+            gColor = 0.2f;
+            bColor = 0.1f;
         } else if (initialMass > 8.0) {
-            rColor = 0.2f; gColor = 0.6f; bColor = 1.0f;
+            rColor = 0.2f;
+            gColor = 0.6f;
+            bColor = 1.0f;
         }
 
         for (int i = 5; i > 0; --i) {
@@ -698,8 +746,7 @@ void DrawStellarVisualizer(float cx, float cy, StarState s) {
             DrawFilledCircle(cx, cy, 35.0f, 0.3f, 0.7f, 1.0f, 0.1f, 40);
             DrawFilledCircle(cx, cy, 15.0f, 0.3f, 0.7f, 1.0f, 0.3f, 40);
             DrawFilledCircle(cx, cy, 5.0f, 1.0f, 1.0f, 1.0f, 1.0f, 40);
-        }
-        else if (initialMass <= 20.0) {
+        } else if (initialMass <= 20.0) {
             DrawFilledCircle(cx, cy, 12.0f, 0.5f, 0.8f, 1.0f, 0.4f, 30);
             DrawFilledCircle(cx, cy, 4.0f, 1.0f, 1.0f, 1.0f, 1.0f, 30);
 
@@ -813,16 +860,20 @@ void DrawGLScene() {
     PrintString(800, massY + 30, "Massa Estelar Inicial:", fontBaseBold, 0.8f, 0.8f, 0.9f);
 
     if (DrawButton(800, massY, 80, 30, "0.5 M☉", initialMass == 0.5, mx, my, clicked)) {
-        initialMass = 0.5; ResetSimulation();
+        initialMass = 0.5;
+        ResetSimulation();
     }
     if (DrawButton(890, massY, 80, 30, "1.0 M☉", initialMass == 1.0, mx, my, clicked)) {
-        initialMass = 1.0; ResetSimulation();
+        initialMass = 1.0;
+        ResetSimulation();
     }
     if (DrawButton(980, massY, 80, 30, "10 M☉", initialMass == 10.0, mx, my, clicked)) {
-        initialMass = 10.0; ResetSimulation();
+        initialMass = 10.0;
+        ResetSimulation();
     }
     if (DrawButton(1070, massY, 80, 30, "30 M☉", initialMass == 30.0, mx, my, clicked)) {
-        initialMass = 30.0; ResetSimulation();
+        initialMass = 30.0;
+        ResetSimulation();
     }
 
     float ctrlY = 410.0f;

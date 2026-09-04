@@ -42,6 +42,12 @@
 ./computerScience/visualOrdering/visual_ordering.exe
 ```
 
+#### Ordenação Visual
+
+```bash
+./computerScience/hash/HashDB.exe
+```
+
 ### biologia
 
 #### evolution
