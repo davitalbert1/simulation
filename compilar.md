@@ -28,10 +28,16 @@
 ./physics/blackHole/blackHole.exe
 ```
 
-#### Objeto estelar
+#### Óptica
 
 ```bash
 ./physics/optics/optics_sim.exe
+```
+
+#### Refração e Reflexão no Vidro
+
+```bash
+./physics/glassRefraction/glass_refraction.exe
 ```
 
 ### ciência da computação
