@@ -17,9 +17,7 @@ GLuint fontBaseRegular = 0;
 GLuint fontBaseBold = 0;
 GLuint fontBaseLarge = 0;
 
-// ---------------------------------------------------------------------------
 //  Fontes (mesmo esquema dos outros projetos: bitmaps gerados pelo Win32)
-// ---------------------------------------------------------------------------
 void BuildFonts() {
     fontBaseRegular = glGenLists(96);
     HFONT fontReg = CreateFont(-13, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
@@ -59,9 +57,7 @@ void PrintString(float x, float y, const char* str, GLuint base, float r, float 
 
 void DrawHelpCard(int mx, int my, bool clicked, UiState* ui);
 
-// ---------------------------------------------------------------------------
 //  Primitivas 2D
-// ---------------------------------------------------------------------------
 void DrawRect(float x, float y, float w, float h, float r, float g, float b, float a) {
     glColor4f(r, g, b, a);
     glBegin(GL_QUADS);
@@ -158,9 +154,7 @@ void DrawDashedLine2D(float x0, float y0, float x1, float y1, float r, float g, 
     glLineWidth(1.0f);
 }
 
-// ---------------------------------------------------------------------------
 //  Botoes e icones
-// ---------------------------------------------------------------------------
 bool DrawButton(float x, float y, float w, float h, const char* label, bool active, int mx, int my, bool clicked) {
     bool hovered = (mx >= x && mx <= x + w && my >= y && my <= y + h);
 
@@ -276,17 +270,13 @@ void DrawGlassIcon(GlassType type, float cx, float cy, float scale) {
     glLineWidth(1.0f);
 }
 
-// ---------------------------------------------------------------------------
 //  Fundo do painel lateral
-// ---------------------------------------------------------------------------
 void DrawPanelBackground() {
     DrawRect(PANEL_X, 0.0f, PANEL_W, 690.0f, 0.075f, 0.085f, 0.12f, 1.0f);
     DrawRect(PANEL_X, 0.0f, 1.5f, 690.0f, 0.20f, 0.28f, 0.42f, 1.0f);
 }
 
-// ---------------------------------------------------------------------------
 //  Cor por comprimento de onda (aproximacao usada em espectros)
-// ---------------------------------------------------------------------------
 void WavelengthColor(float nm, float* r, float* g, float* b) {
     float nr = 0.0f, ng = 0.0f, nb = 0.0f;
 
@@ -324,9 +314,9 @@ void SpectrumColor(int index, float* r, float* g, float* b) {
     int count = (int)(sizeof(nm) / sizeof(nm[0]));
     if (index < 0 || index >= count) index = 0;
     WavelengthColor(nm[index], r, g, b);
-}// ---------------------------------------------------------------------------
+}
+
 //  Help card da aba Simulacao
-// ---------------------------------------------------------------------------
 void DrawSimHelpCard(UiState* ui) {
     float w = 700.0f;
     float h = 320.0f;
@@ -365,9 +355,7 @@ void DrawSimHelpCard(UiState* ui) {
     (void)ui;
 }
 
-// ---------------------------------------------------------------------------
 //  Help card da aba Modelos
-// ---------------------------------------------------------------------------
 void DrawModelsHelpCard(UiState* ui) {
     float w = 420.0f;
     float h = 232.0f;
@@ -393,9 +381,7 @@ void DrawModelsHelpCard(UiState* ui) {
     (void)ui;
 }
 
-// ---------------------------------------------------------------------------
 //  Barra superior
-// ---------------------------------------------------------------------------
 void DrawTopBar(const char* leftLabel, const char* rightLabel, int* activeTab, int mx, int my, bool clicked,
                 UiState* ui, const char* title, const char* subtitle) {
     (void)leftLabel;
