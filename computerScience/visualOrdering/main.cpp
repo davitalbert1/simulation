@@ -11,7 +11,7 @@
 #include <string>
 #include <cstring>
 
-const int NUM_ELEMENTS = 100;
+const int NUM_ELEMENTS = 250;
 int arr[NUM_ELEMENTS];
 bool isSorted[NUM_ELEMENTS];
 
@@ -453,7 +453,7 @@ int main() {
         if (GetAsyncKeyState(VK_DOWN)) {
             if (!downKeyDown) {
                 int current = delayMs.load();
-                if (current > 0) delayMs.store(current - 5 > 0 ? current - 5 : 0);
+                delayMs.store(std::max(1, current - 5));
                 downKeyDown = true;
             }
         } else {
