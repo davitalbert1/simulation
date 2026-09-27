@@ -1,4 +1,4 @@
-# Git Cheatsheet - Simulation
+# Git Cheatsheet - simulation
 
 ## Setup Inicial do Repositório
 
@@ -12,6 +12,10 @@ git init
 
 ```bash
 git remote add origin https://github.com/davitalbert1/simulation.git
+```
+
+```bash
+git remote add origin git@github.com:davitalbert1/simulation.git
 ```
 
 ### Verificar remoto
@@ -55,10 +59,14 @@ ssh -T git@github.com
 Resposta esperada:
 
 ```text
-Hi davitalbert1! You've successfully authenticated, but GitHub does not provide shell access.
+Hi davitalbert1! You've successfully authenticated, but GitHub does not provide shell simulation.
 ```
 
 ## Alterar repositório para SSH
+
+```bash
+git remote set-url origin https://github.com/davitalbert1/simulation.git
+```
 
 ```bash
 git remote set-url origin git@github.com:davitalbert1/simulation.git
