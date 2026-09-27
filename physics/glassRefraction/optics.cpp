@@ -48,7 +48,9 @@ float MaterialIor(int index, int channel) {
 //  Vetores
 static Vec3 MakeVec(float x, float y, float z) {
     Vec3 v;
-    v.x = x; v.y = y; v.z = z;
+    v.x = x;
+    v.y = y;
+    v.z = z;
     return v;
 }
 
@@ -656,29 +658,41 @@ static void DrawGlassBody(const GlassObject& g, int materialIndex) {
         glBegin(GL_QUADS);
         // faces laterais
         glNormal3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(ax, -ay, -az); glVertex3f(ax, ay, -az);
-        glVertex3f(ax, ay, az); glVertex3f(ax, -ay, az);
+        glVertex3f(ax, -ay, -az);
+        glVertex3f(ax, ay, -az);
+        glVertex3f(ax, ay, az);
+        glVertex3f(ax, -ay, az);
 
         glNormal3f(-1.0f, 0.0f, 0.0f);
-        glVertex3f(-ax, -ay, -az); glVertex3f(-ax, -ay, az);
-        glVertex3f(-ax, ay, az); glVertex3f(-ax, ay, -az);
+        glVertex3f(-ax, -ay, -az);
+        glVertex3f(-ax, -ay, az);
+        glVertex3f(-ax, ay, az);
+        glVertex3f(-ax, ay, -az);
 
         glNormal3f(0.0f, 0.0f, 1.0f);
-        glVertex3f(-ax, -ay, az); glVertex3f(ax, -ay, az);
-        glVertex3f(ax, ay, az); glVertex3f(-ax, ay, az);
+        glVertex3f(-ax, -ay, az);
+        glVertex3f(ax, -ay, az);
+        glVertex3f(ax, ay, az);
+        glVertex3f(-ax, ay, az);
 
         glNormal3f(0.0f, 0.0f, -1.0f);
-        glVertex3f(-ax, -ay, -az); glVertex3f(-ax, ay, -az);
-        glVertex3f(ax, ay, -az); glVertex3f(ax, -ay, -az);
+        glVertex3f(-ax, -ay, -az);
+        glVertex3f(-ax, ay, -az);
+        glVertex3f(ax, ay, -az);
+        glVertex3f(ax, -ay, -az);
 
         // faces de entrada e saida
         glNormal3f(0.0f, 1.0f, 0.0f);
-        glVertex3f(-ax, ay, -az); glVertex3f(-ax, ay, az);
-        glVertex3f(ax, ay, az); glVertex3f(ax, ay, -az);
+        glVertex3f(-ax, ay, -az);
+        glVertex3f(-ax, ay, az);
+        glVertex3f(ax, ay, az);
+        glVertex3f(ax, ay, -az);
 
         glNormal3f(0.0f, -1.0f, 0.0f);
-        glVertex3f(-ax, -ay, -az); glVertex3f(ax, -ay, -az);
-        glVertex3f(ax, -ay, az); glVertex3f(-ax, -ay, az);
+        glVertex3f(-ax, -ay, -az);
+        glVertex3f(ax, -ay, -az);
+        glVertex3f(ax, -ay, az);
+        glVertex3f(-ax, -ay, az);
         glEnd();
     } else if (g.type == GT_BOTTLE) {
         // Garrafa: corpo cilindrico com gargalo e tampa.
