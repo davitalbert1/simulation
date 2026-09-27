@@ -154,6 +154,7 @@ verifique o padrão de outros códigos e faça na mesma estrutura, garanta que e
 ### Óptica
 - Reflexão em espelhos (feito)
 - Refração em lentes (feito)
+- Refração e reflexão no vidro: janelas, lentes, lupas, garrafas e prismas (feito)
 - Formação de arco-íris
 - Interferência de ondas
 - Difração

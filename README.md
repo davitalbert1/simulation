@@ -13,6 +13,7 @@ Este projeto contém diversas simulações visuais desenvolvidas para demonstrar
 - **Ciclo de Vida Estelar** - Visualização da evolução de estrelas
 - **Buraco Negro** - Simulação de propriedades de buracos negros
 - **Óptica** - Simulações de reflexão e refração de luz
+- **Refração e Reflexão no Vidro** - Bancada óptica 3D com janelas, lentes, lupas, garrafas e prismas móveis
 
 ### Biologia
 - **Evolução** - Simulação de processos evolutivos e seleção natural
@@ -66,6 +67,11 @@ Após a compilação, execute as simulações desejadas:
 ./physics/optics/optics_sim.exe
 ```
 
+#### Refração e Reflexão no Vidro
+```bash
+./physics/glassRefraction/glass_refraction.exe
+```
+
 ### Biologia
 
 #### Evolução
@@ -99,6 +105,7 @@ simulation/
 │   └── PI/                 # Simulações matemáticas
 ├── physics/
 │   ├── blackHole/          # Simulação de buracos negros
+│   ├── glassRefraction/    # Refração e reflexão da luz no vidro
 │   ├── optics/             # Simulações de óptica
 │   ├── sistem/             # Sistema solar
 │   └── starLifecycle/      # Ciclo de vida estelar
