@@ -31,7 +31,11 @@ static const float kSphereRadius = 0.55f;
 
 //  Utilitarios
 Vec3 MakeVec(float x, float y, float z) {
-    Vec3 v; v.x = x; v.y = y; v.z = z; return v;
+    Vec3 v;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    return v;
 }
 
 Vec3 Add(const Vec3& a, const Vec3& b) {
@@ -716,7 +720,10 @@ void DrawSimTabPanel(int mx, int my, bool clicked, bool mouseDown, UiState* ui) 
         if (ui->placement == PM_CLICK && complete) {
             float placeX = -0.9f + 0.9f * (float)(gGlasses.size() % 4);
             float placeZ = -0.9f + 0.9f * (float)((gGlasses.size() / 4) % 4);
-            if (gGlasses.empty()) { placeX = 0.0f; placeZ = 0.0f; }
+            if (gGlasses.empty()) {
+                placeX = 0.0f;
+                placeZ = 0.0f;
+            }
             AddGlass(t, placeX, placeZ);
             ui->draggingIcon = false;
             ui->dirty = true;
@@ -887,28 +894,36 @@ void SimulationTabHandleKey(int vk, float dt, bool pressedNow, bool held) {
 
         switch (vk) {
             case VK_LEFT:
-                g.x -= step; gTraceDirty = true;
+                g.x -= step;
+                gTraceDirty = true;
                 return;
             case VK_RIGHT:
-                g.x += step; gTraceDirty = true;
+                g.x += step;
+                gTraceDirty = true;
                 return;
             case VK_UP:
-                g.z -= step; gTraceDirty = true;
+                g.z -= step;
+                gTraceDirty = true;
                 return;
             case VK_DOWN:
-                g.z += step; gTraceDirty = true;
+                g.z += step;
+                gTraceDirty = true;
                 return;
             case 'W':
-                g.y += step; gTraceDirty = true;
+                g.y += step;
+                gTraceDirty = true;
                 return;
             case 'S':
-                g.y -= step; gTraceDirty = true;
+                g.y -= step;
+                gTraceDirty = true;
                 return;
             case 'A':
-                g.yaw -= 45.0f * dt; gTraceDirty = true;
+                g.yaw -= 45.0f * dt;
+                gTraceDirty = true;
                 return;
             case 'D':
-                g.yaw += 45.0f * dt; gTraceDirty = true;
+                g.yaw += 45.0f * dt;
+                gTraceDirty = true;
                 return;
             case 'Q':
                 g.ior = Clampf(g.ior - 0.35f * dt, 1.01f, 2.60f);

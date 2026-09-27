@@ -35,22 +35,28 @@ ModelInfo ComputeModelInfo(int type, float ior, float height) {
 
     switch (type) {
         case GT_WINDOW:
-            width = 1.90f; thickness = 0.10f;
+            width = 1.90f;
+            thickness = 0.10f;
             break;
         case GT_SHOWCASE:
-            width = 1.60f; thickness = 0.48f;
+            width = 1.60f;
+            thickness = 0.48f;
             break;
         case GT_LENS:
-            width = 1.30f; thickness = 0.55f;
+            width = 1.30f;
+            thickness = 0.55f;
             break;
         case GT_MAGNIFIER:
-            width = 1.80f; thickness = 0.90f;
+            width = 1.80f;
+            thickness = 0.90f;
             break;
         case GT_BOTTLE:
-            width = 1.05f; thickness = 1.05f;
+            width = 1.05f;
+            thickness = 1.05f;
             break;
         case GT_PRISM:
-            width = 1.15f; thickness = 1.35f;
+            width = 1.15f;
+            thickness = 1.35f;
             break;
         default:
             break;
@@ -312,9 +318,13 @@ void DrawModelsPanel(int mx, int my, bool clicked, bool mouseDown, UiState* ui) 
 
         float r = 0.12f, g = 0.14f, b = 0.21f;
         if (gModelType == t) {
-            r = 0.16f; g = 0.38f; b = 0.85f;
+            r = 0.16f;
+            g = 0.38f;
+            b = 0.85f;
         } else if (hovered) {
-            r = 0.17f; g = 0.23f; b = 0.35f;
+            r = 0.17f;
+            g = 0.23f;
+            b = 0.35f;
         }
 
         DrawRect(bx, by, cardW, cardH, r, g, b, 0.95f);
