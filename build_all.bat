@@ -10,8 +10,8 @@ echo Opcao invalida: %~1
 echo Uso: build_all.bat [clean|rebuild]
 echo.
 echo   (sem argumento) - Compilar todos os projetos
-echo   clean          - Deletar todos os executaveis
-echo   rebuild        - Limpar e compilar tudo
+echo   clean           - Deletar todos os executaveis
+echo   rebuild         - Limpar e compilar tudo
 exit /b 1
 
 :build_all
