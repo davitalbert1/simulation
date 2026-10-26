@@ -81,6 +81,16 @@ Após a compilação, execute as simulações desejadas:
 
 ### Ciência da Computação
 
+#### hash
+```bash
+./computerScience/hash/hash.exe
+```
+
+#### nQueen
+```bash
+./computerScience/nQueen/nQueen.exe
+```
+
 #### Ordenação Visual
 ```bash
 ./computerScience/visualOrdering/visual_ordering.exe
