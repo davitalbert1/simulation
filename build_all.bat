@@ -172,9 +172,18 @@ if errorlevel 1 exit /b 1
 "%CMAKE_EXE%" --build "%BUILD_DIR%" --config Release --parallel
 exit /b %errorlevel%
 
+
 :cmake_clean
 echo Limpando %CD%
-if defined CMAKE_EXE if exist "%BUILD_DIR%\CMakeCache.txt" "%CMAKE_EXE%" --build "%BUILD_DIR%" --target clean
-if exist "%BUILD_DIR%" rmdir /s /q "%BUILD_DIR%"
-if exist *.exe del /f /q *.exe
+
+rem Remove a pasta build sem chamar o CMake.
+rem Isso evita erros causados por caminhos antigos no CMakeCache.txt.
+if exist "%BUILD_DIR%" (
+    rmdir /s /q "%BUILD_DIR%"
+)
+
+rem Remove executaveis na raiz do projeto atual.
+del /f /q "*.exe" 2>nul
+
 exit /b 0
+
